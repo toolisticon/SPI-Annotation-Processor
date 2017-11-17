@@ -52,6 +52,11 @@ Just add a SpiImpl annotation to your service implementation:
             }
 	}
 
+## How to use the service locator
+
+	System.out.println(ExampleSpiInterfaceServiceLocator.locate().doSomething());
+
+
 See our examples subprojects about how to use the annotations.
 
 
