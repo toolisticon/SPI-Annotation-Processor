@@ -1,0 +1,60 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>example-service</artifactId>
+    <packaging>bundle</packaging>
+
+    <parent>
+        <groupId>de.holisticon.tools.spiap</groupId>
+        <artifactId>example-parent</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+
+    <name>example-service</name>
+    <description>Please refer to https://github.com/holisticon/spi-ap</description>
+
+
+    <dependencies>
+
+
+        <dependency>
+            <groupId>de.holisticon.tools.spiap</groupId>
+            <artifactId>example-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>de.holisticon.tools.spiap</groupId>
+            <artifactId>spi-ap-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>de.holisticon.tools.spiap</groupId>
+            <artifactId>spi-ap-processor</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+
+    </dependencies>
+
+
+    <build>
+
+        <plugins>
+
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <verbose>true</verbose>
+                    <source>1.6</source>
+                    <target>1.6</target>∂
+                </configuration>
+            </plugin>
+
+        </plugins>
+
+    </build>
+
+
+</project>

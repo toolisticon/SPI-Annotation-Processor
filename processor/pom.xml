@@ -1,0 +1,102 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>spi-ap-processor</artifactId>
+    <packaging>bundle</packaging>
+
+    <parent>
+        <groupId>de.holisticon.tools.spiap</groupId>
+        <artifactId>spi-ap-parent</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+
+    <name>spi-ap-processor</name>
+    <description>Please refer to https://github.com/holisticon/spi-ap</description>
+
+
+    <dependencies>
+
+
+        <dependency>
+            <groupId>de.holisticon.annotationprocessortoolkit</groupId>
+            <artifactId>annotationprocessor</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>de.holisticon.tools.spiap</groupId>
+            <artifactId>spi-ap-api</artifactId>
+        </dependency>
+
+
+        <dependency>
+            <groupId>com.google.testing.compile</groupId>
+            <artifactId>compile-testing</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+
+    </dependencies>
+
+
+    <build>
+
+        <plugins>
+
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.4.3</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+
+
+                        <configuration>
+
+                            <!--
+                                usually you should repacke all referenced 3RD party libraries into your annotation processor jar.
+                                    - because the annotation processor should always be linked as provided dependency when it is used.
+                                    - to prevent a version conflict of your annotation processors dependencies and the applications dependencies.
+                            -->
+
+                            <relocations>
+                                <relocation>
+                                    <pattern>de.holisticon.annotationprocessortoolkit</pattern>
+                                    <shadedPattern>
+                                        de.holisticon.tools.spiap.processor._3rdparty.de.holisticon.annotationprocessortoolkit
+                                    </shadedPattern>
+                                </relocation>
+
+                            </relocations>
+
+                        </configuration>
+
+                    </execution>
+                </executions>
+
+
+            </plugin>
+
+
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <verbose>true</verbose>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                    <proc>none</proc>
+                </configuration>
+            </plugin>
+
+        </plugins>
+
+    </build>
+
+
+</project>
