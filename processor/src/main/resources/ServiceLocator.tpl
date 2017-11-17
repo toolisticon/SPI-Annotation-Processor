@@ -1,6 +1,6 @@
-package $< package >;
+package ${ package };
 
-import $< canonicalName >;
+import ${ canonicalName };
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -10,20 +10,20 @@ import java.util.ServiceLoader;
 /**
  * A generic service locator.
  */
-public class $< simpleName >ServiceLocator {
+public class ${ simpleName }ServiceLocator {
 
-    private $< simpleName >ServiceLocator() {
+    private ${ simpleName }ServiceLocator() {
     }
 
-    public static $< simpleName > locate() {
+    public static ${ simpleName } locate() {
         final List services = locateAll();
-        return services.isEmpty() ? ($< simpleName >)null : ($< simpleName >)services.get(0);
+        return services.isEmpty() ? (${ simpleName })null : (${ simpleName })services.get(0);
     }
 
-    public static List< $< simpleName > > locateAll() {
+    public static List< ${ simpleName } > locateAll() {
 
-        final Iterator<$< simpleName >> iterator = ServiceLoader.load($< simpleName >.class).iterator();
-        final List<$< simpleName >> services = new ArrayList<$< simpleName >>();
+        final Iterator<${ simpleName }> iterator = ServiceLoader.load(${ simpleName }.class).iterator();
+        final List<${ simpleName }> services = new ArrayList<${ simpleName }>();
 
         while (iterator.hasNext()) {
             try {
