@@ -90,3 +90,5 @@ This project is sponsored and supported by [holisticon AG](http://www.holisticon
 # License
 
 This project is released under the revised [BSD License](LICENSE).
+
+This project includes and repackages the [Annotation-Processor-Toolkit](https://github.com/holisticon/annotation-processor-toolkit) released under the  [BSD License](/3rdPartyLicenses/annotation-processor-toolkit/LICENSE.txt).
