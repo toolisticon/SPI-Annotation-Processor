@@ -1,4 +1,4 @@
-# SPI-Annotation-Processor
+# SPIAP - The SPI-Annotation-Processor
 
 
 # Why you should use this project?
@@ -84,8 +84,6 @@ The likelihood of a pull request being used rises with the following properties:
 ## Sponsoring
 
 This project is sponsored and supported by [holisticon AG](http://www.holisticon.de/)
-
-![Holisticon AG](/docs/assets/img/sponsors/holisticon-logo.png)
 
 # License
 
