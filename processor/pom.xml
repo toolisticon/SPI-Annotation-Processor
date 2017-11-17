@@ -2,18 +2,16 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>spi-ap-processor</artifactId>
+    <artifactId>spiap-processor</artifactId>
     <packaging>bundle</packaging>
 
     <parent>
-        <groupId>de.holisticon.tools.spiap</groupId>
-        <artifactId>spi-ap-parent</artifactId>
+        <groupId>io.toolisticon.spiap</groupId>
+        <artifactId>spiap-parent</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <name>spi-ap-processor</name>
-    <description>Please refer to https://github.com/holisticon/spi-ap</description>
-
+    <name>spiap-processor</name>
 
     <dependencies>
 
@@ -24,8 +22,8 @@
         </dependency>
 
         <dependency>
-            <groupId>de.holisticon.tools.spiap</groupId>
-            <artifactId>spi-ap-api</artifactId>
+            <groupId>io.toolisticon.spiap</groupId>
+            <artifactId>spiap-api</artifactId>
         </dependency>
 
 
@@ -68,7 +66,7 @@
                                 <relocation>
                                     <pattern>de.holisticon.annotationprocessortoolkit</pattern>
                                     <shadedPattern>
-                                        de.holisticon.tools.spiap.processor._3rdparty.de.holisticon.annotationprocessortoolkit
+                                        io.toolisticon.spiap.processor._3rdparty.de.holisticon.annotationprocessortoolkit
                                     </shadedPattern>
                                 </relocation>
 

@@ -1,4 +1,4 @@
-package de.holisticon.tools.spiap.api;
+package io.toolisticon.spiap.api;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

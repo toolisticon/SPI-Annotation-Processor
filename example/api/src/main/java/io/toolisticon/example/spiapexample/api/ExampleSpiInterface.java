@@ -1,6 +1,6 @@
-package de.holisticon.example.spiapexample.api;
+package io.toolisticon.example.spiapexample.api;
 
-import de.holisticon.tools.spiap.api.Spi;
+import io.toolisticon.spiap.api.Spi;
 
 /**
  * Demonstrates the usage of the {@link Spi} annotation.

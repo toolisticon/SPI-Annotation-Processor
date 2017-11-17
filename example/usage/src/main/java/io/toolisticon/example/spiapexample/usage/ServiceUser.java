@@ -1,6 +1,6 @@
-package de.holisticon.example.spiapexample.usage;
+package io.toolisticon.example.spiapexample.usage;
 
-import de.holisticon.example.spiapexample.api.ExampleSpiInterfaceServiceLocator;
+import io.toolisticon.example.spiapexample.api.ExampleSpiInterfaceServiceLocator;
 
 /**
  * Demonstrates usage of the SPI.

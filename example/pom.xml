@@ -6,8 +6,8 @@
     <packaging>pom</packaging>
 
     <parent>
-        <groupId>de.holisticon.tools.spiap</groupId>
-        <artifactId>spi-ap-parent</artifactId>
+        <groupId>io.toolisticon.spiap</groupId>
+        <artifactId>spiap-parent</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
@@ -25,13 +25,13 @@
         <dependencies>
 
             <dependency>
-                <groupId>de.holisticon.tools.spiap</groupId>
+                <groupId>io.toolisticon.spiap</groupId>
                 <artifactId>example-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>de.holisticon.tools.spiap</groupId>
+                <groupId>io.toolisticon.spiap</groupId>
                 <artifactId>example-service</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -89,7 +89,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Export-Package>de.holisticon.example.spiapexample</Export-Package>
+                        <Export-Package>io.toolisticon.example.spiapexample</Export-Package>
                     </instructions>
                 </configuration>
             </plugin>
