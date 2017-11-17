@@ -27,6 +27,31 @@ Since it has to be there just at compile time, it's ok to use provided scope.
 	    </dependency>
 	</dependencies>
 
+## How to generate the service locator class
+
+Just add the Spi annotation to your SPI:
+
+	@Spi
+	public interface ExampleSpiInterface {
+
+	    String doSomething();
+
+	}
+
+The locator is named like the SPI suffixed with ServiceLocator (ExampleSpiInterfaceServiceLocator in this example)
+
+## How to register a service implementation
+
+Just add a SpiImpl annotation to your service implementation:
+
+	@SpiImpl(spis = {"de.holisticon.example.spiapexample.api.ExampleSpiInterface"})
+	public class ExampleSpiService implements ExampleSpiInterface {
+    	    @Override
+            public String doSomething() {
+                return "IT WORKS !";
+            }
+	}
+
 See our examples subprojects about how to use the annotations.
 
 
