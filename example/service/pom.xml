@@ -6,7 +6,7 @@
     <packaging>bundle</packaging>
 
     <parent>
-        <groupId>de.holisticon.tools.spiap</groupId>
+        <groupId>io.toolisticon.spiap</groupId>
         <artifactId>example-parent</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
@@ -17,20 +17,19 @@
 
     <dependencies>
 
+        <dependency>
+            <groupId>io.toolisticon.spiap</groupId>
+            <artifactId>spiap-api</artifactId>
+        </dependency>
 
         <dependency>
-            <groupId>de.holisticon.tools.spiap</groupId>
+            <groupId>io.toolisticon.spiap</groupId>
             <artifactId>example-api</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>de.holisticon.tools.spiap</groupId>
-            <artifactId>spi-ap-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>de.holisticon.tools.spiap</groupId>
-            <artifactId>spi-ap-processor</artifactId>
+            <groupId>io.toolisticon.spiap</groupId>
+            <artifactId>spiap-processor</artifactId>
             <scope>provided</scope>
         </dependency>
 
@@ -48,7 +47,7 @@
                 <configuration>
                     <verbose>true</verbose>
                     <source>1.6</source>
-                    <target>1.6</target>∂
+                    <target>1.6</target>
                 </configuration>
             </plugin>
 

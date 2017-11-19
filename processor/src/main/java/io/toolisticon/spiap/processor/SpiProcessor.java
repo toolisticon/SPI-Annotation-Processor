@@ -1,9 +1,10 @@
-package de.holisticon.tools.spiap.processor;
+package io.toolisticon.spiap.processor;
 
 import de.holisticon.annotationprocessortoolkit.AbstractAnnotationProcessor;
 import de.holisticon.annotationprocessortoolkit.generators.SimpleJavaWriter;
 import de.holisticon.annotationprocessortoolkit.tools.ElementUtils;
-import de.holisticon.tools.spiap.api.Spi;
+import io.toolisticon.spiap.api.Spi;
+import io.toolisticon.spiap.api.SpiImpl;
 
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;
@@ -16,7 +17,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Annotation Processor for {@link de.holisticon.tools.spiap.api.SpiImpl}.
+ * Annotation Processor for {@link SpiImpl}.
  */
 public class SpiProcessor extends AbstractAnnotationProcessor {
 

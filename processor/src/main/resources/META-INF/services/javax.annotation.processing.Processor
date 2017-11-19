@@ -1,2 +1,2 @@
-de.holisticon.tools.spiap.processor.SpiProcessor
-de.holisticon.tools.spiap.processor.SpiImplProcessor
+io.toolisticon.spiap.processor.SpiProcessor
+io.toolisticon.spiap.processor.SpiImplProcessor
