@@ -1,5 +1,7 @@
 # SPI-Annotation-Processor
 
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.toolisticon.spiap/spiap-parent/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.toolisticon.spiap/spiap-parent)
+[![Build Status](https://api.travis-ci.org/toilisticon/spiap.svg)](https://travis-ci.org/toolisticon/spiap)
 
 # Why you should use this project?
 
