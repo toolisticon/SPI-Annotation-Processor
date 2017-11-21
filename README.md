@@ -2,6 +2,7 @@
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.toolisticon.spiap/spiap-parent/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.toolisticon.spiap/spiap-parent)
 [![Build Status](https://travis-ci.org/toolisticon/SPI-Annotation-Processor.svg?branch=master)](https://travis-ci.org/toolisticon/SPI-Annotation-Processor)
+[![Coverage Status](https://coveralls.io/repos/github/toolisticon/SPI-Annotation-Processor/badge.svg)](https://coveralls.io/github/toolisticon/SPI-Annotation-Processor)
 
 # Why you should use this project?
 
