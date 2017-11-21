@@ -1,0 +1,16 @@
+language: java
+dist: trusty
+sudo: false
+addons:
+  apt:
+    packages:
+      - openjdk-6-jdk
+jdk:
+- openjdk7
+- openjdk8
+- oraclejdk8
+install: mvn install -DskipTests=true -q
+script: mvn verify -B -q
+after_success: ! '[[ $TRAVIS_BRANCH == "master" && $TRAVIS_REPO_SLUG == "toolisticon/SPI-Annotation-Processor"
+  && $TRAVIS_PULL_REQUEST == "false" ]] && { curl https://raw.githubusercontent.com/holisticon/travis-configuration/master/settings.xml --location
+  --create-dirs -o target/travis/settings.xml; }'
