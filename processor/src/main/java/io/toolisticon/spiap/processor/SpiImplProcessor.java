@@ -104,6 +104,7 @@ public class SpiImplProcessor extends AbstractAnnotationProcessor {
 
                     try {
                         simpleResourceWriter.append(typeElement.getQualifiedName().toString() + "\n");
+
                     } catch (IOException e) {
                         getMessager().error(element, SpiImplProcessorMessages.ERROR_COULD_NOT_APPEND_TO_SERVICE_LOCATOR_FILE.getMessage(), filename);
                         continue outer;

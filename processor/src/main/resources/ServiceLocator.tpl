@@ -43,6 +43,15 @@ public class ${ simpleName }ServiceLocator {
 
         }
 
+        public ServiceKey(String id) {
+            this (id, "");
+        }
+
+        public ServiceKey(String id, String description) {
+            this.id = id;
+            this.description = description;
+        }
+
         public String getId() {
             return id;
         }
@@ -76,6 +85,10 @@ public class ${ simpleName }ServiceLocator {
      * @throws ImplementationNotFoundException if either passed service key, it's id are null or if the service implementation can't be found.
      */
     public static ${ simpleName } locateByServiceKey(${ simpleName }ServiceLocator.ServiceKey serviceKey) {
+
+        if (serviceKey == null) {
+            throw new ImplementationNotFoundException(null);
+        }
 
         return locateById(serviceKey.getId());
 
