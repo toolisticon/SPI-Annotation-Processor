@@ -6,12 +6,26 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Marks an implementation of a SPI.
+ * Marks an implementation of one or more SPI.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(value = {ElementType.TYPE})
 public @interface SpiImpl {
 
-    String[] spis() default {};
+    /**
+     * The SPI interfaces implemented by the annotated class.
+     */
+    Class<?>[] value() default {};
+
+    /**
+     * This optional attribute is used to declare an identifier for this implementation.
+     * If not set, the full qualified class name of the service implementation will be used as id.
+     */
+    String id() default "";
+
+    /**
+     * This optional attribute is used to add a short description about the implementing class.
+     */
+    String description() default "";
 
 }

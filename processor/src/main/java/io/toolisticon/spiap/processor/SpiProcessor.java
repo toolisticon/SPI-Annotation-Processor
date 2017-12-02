@@ -4,7 +4,6 @@ import de.holisticon.annotationprocessortoolkit.AbstractAnnotationProcessor;
 import de.holisticon.annotationprocessortoolkit.generators.SimpleJavaWriter;
 import de.holisticon.annotationprocessortoolkit.tools.ElementUtils;
 import io.toolisticon.spiap.api.Spi;
-import io.toolisticon.spiap.api.SpiImpl;
 
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;
@@ -17,7 +16,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Annotation Processor for {@link SpiImpl}.
+ * Annotation Processor for {@link Spi}.
  */
 public class SpiProcessor extends AbstractAnnotationProcessor {
 
@@ -36,7 +35,7 @@ public class SpiProcessor extends AbstractAnnotationProcessor {
 
             // check if it is place on interface
             if (!ElementUtils.CheckKindOfElement.isInterface(element)) {
-                getMessager().error(element, "Spi annotation must only be used on interfaces");
+                getMessager().error(element, SpiProcessorMessages.ERROR_SPI_ANNOTATION_MUST_BE_PLACED_ON_INTERFACE.getMessage());
                 continue;
             }
 
@@ -56,10 +55,10 @@ public class SpiProcessor extends AbstractAnnotationProcessor {
 
             try {
                 SimpleJavaWriter javaWriter = getFileObjectUtils().createSourceFile(filePath, element);
-                javaWriter.writeTemplate( "/ServiceLocator.tpl", model);
+                javaWriter.writeTemplate("/ServiceLocator.tpl", model);
                 javaWriter.close();
             } catch (IOException e) {
-                getMessager().error(element, "Couldn't create Spi Service Locator : ${0}", filePath);
+                getMessager().error(element, SpiProcessorMessages.ERROR_COULD_NOT_CREATE_SERVICE_LOCATOR.getMessage(), filePath);
             }
         }
 

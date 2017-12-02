@@ -7,7 +7,7 @@ import io.toolisticon.spiap.api.Spi;
  */
 
 @Spi
-public interface ExampleSpiInterface {
+public interface HelloWorldSpiInterface {
 
     String doSomething();
 
