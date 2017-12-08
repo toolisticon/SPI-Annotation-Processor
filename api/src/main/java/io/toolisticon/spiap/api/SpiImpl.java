@@ -28,4 +28,11 @@ public @interface SpiImpl {
      */
     String description() default "";
 
+    /**
+     * This optional attribute defines the order of the service implementations returned by the generated service allocator.
+     * Lower value are defining a higher priority. Defaults to 0.
+     * @return
+     */
+    int priority() default 0;
+
 }

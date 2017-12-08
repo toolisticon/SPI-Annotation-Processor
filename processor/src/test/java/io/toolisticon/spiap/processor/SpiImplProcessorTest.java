@@ -78,6 +78,14 @@ public class SpiImplProcessorTest extends AbstractAnnotationProcessorIntegration
                                 .finishMessageValidator()
                                 .build()
                 },
+                {
+                        "Test processing should succees with plain interfaces",
+                        AnnotationProcessorIntegrationTestConfigurationBuilder
+                                .createTestConfig()
+                                .setSourceFileToCompile("spiimplprocessor/TestcaseValidUseWithPlainInterface.java")
+                                .compilationShouldSucceed()
+                                .build()
+                },
 
 
         });

@@ -15,10 +15,10 @@ import java.util.List;
  * Tests of {@link SpiProcessor}.
  */
 @RunWith(Parameterized.class)
-public class SpiProcessorTest extends AbstractAnnotationProcessorIntegrationTest<SpiProcessor> {
+public class SpiServiceLocatorProcessorTest extends AbstractAnnotationProcessorIntegrationTest<SpiProcessor> {
 
 
-    public SpiProcessorTest(String description, AnnotationProcessorIntegrationTestConfiguration configuration) {
+    public SpiServiceLocatorProcessorTest(String description, AnnotationProcessorIntegrationTestConfiguration configuration) {
         super(configuration);
     }
 
@@ -40,15 +40,15 @@ public class SpiProcessorTest extends AbstractAnnotationProcessorIntegrationTest
                         "Test valid usage",
                         AnnotationProcessorIntegrationTestConfigurationBuilder
                                 .createTestConfig()
-                                .setSourceFileToCompile("spiprocessor/spi/TestcaseValidUsage.java")
+                                .setSourceFileToCompile("spiprocessor/spiservicelocator/validusage/package-info.java")
                                 .compilationShouldSucceed()
                                 .build()
                 },
                 {
-                        "Test annotation was put on class",
+                        "Test annotation type attribute is class",
                         AnnotationProcessorIntegrationTestConfigurationBuilder
                                 .createTestConfig()
-                                .setSourceFileToCompile("spiprocessor/spi/TestcaseAnnotationOnClass.java")
+                                .setSourceFileToCompile("spiprocessor/spiservicelocator/classAsValueAttribute/package-info.java")
                                 .compilationShouldFail()
                                 .addMessageValidator()
                                 .setErrorChecks(SpiProcessorMessages.ERROR_SPI_ANNOTATION_MUST_BE_PLACED_ON_INTERFACE.getCode())
