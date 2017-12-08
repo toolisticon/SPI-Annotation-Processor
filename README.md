@@ -31,7 +31,7 @@ Since it has to be there just at compile time, it's ok to use provided scope.
 	</dependencies>
 
 ## How to generate the service locator class
-
+### By annotating the service provider interface
 Just add the Spi annotation to your SPI:
 
 	@Spi
@@ -43,8 +43,20 @@ Just add the Spi annotation to your SPI:
 
 The locator is named like the SPI suffixed with ServiceLocator (ExampleSpiInterfaceServiceLocator in this example)
 
-## How to register a service implementation
+### By annotating a package
+Create a package-info.java file in the package were you want to create the service locator in.
+Then add the SpiServiceLocator annotation in it:
 
+    @SpiServiceLocator(ExampleSpiInterface.class)
+    package your.target.package;
+
+    import io.toolisticon.spiap.api.SpiServiceLocator;
+    import your.spi.package.ExampleSpiInterface;
+
+The locator will be created in the annotated package. It is named like the SPI suffixed with ServiceLocator (ExampleSpiInterfaceServiceLocator in this example)
+
+
+## How to register a service implementation
 Just add a SpiImpl annotation to your service implementation:
 
 	@SpiImpl(spis = {"de.holisticon.example.spiapexample.api.ExampleSpiInterface"})
@@ -54,6 +66,7 @@ Just add a SpiImpl annotation to your service implementation:
                 return "IT WORKS !";
             }
 	}
+
 
 ## How to use the service locator
 
