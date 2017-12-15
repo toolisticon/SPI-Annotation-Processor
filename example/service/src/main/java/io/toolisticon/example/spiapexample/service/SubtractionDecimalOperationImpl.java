@@ -7,7 +7,7 @@ import io.toolisticon.spiap.api.SpiImpl;
 /**
  * Implements the subtraction decimal operation
  */
-@SpiImpl(value = DecimalCalculationOperation.class, id = "SUBTRACTION", description = "Does the subtraction operation on two int values")
+@SpiImpl(value = DecimalCalculationOperation.class, id = "SUBTRACTION", description = "Does the subtraction operation on two int values", priority = -5)
 public class SubtractionDecimalOperationImpl implements DecimalCalculationOperation {
 
     @Override

@@ -10,7 +10,12 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
+import javax.tools.FileObject;
+import javax.tools.StandardLocation;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -26,6 +31,33 @@ public class SpiImplProcessor extends AbstractAnnotationProcessor {
 
     private final static Map<String, SimpleResourceWriter> spiResourceFilePool = new HashMap<String, SimpleResourceWriter>();
 
+    private final static ServiceImplMap serviceImplHashMap = new ServiceImplMap();
+
+
+    /**
+     * Map to store service provider implementations.
+     */
+    protected static class ServiceImplMap extends HashMap<String, Set<String>> {
+
+        /**
+         * Convenience method to add a value.
+         * Creates a Set if no entry for passedkey can be found.
+         *
+         * @param key   the key to look for
+         * @param value the value to store in keys set
+         * @return the keys set
+         */
+        public Set<String> put(String key, String value) {
+            Set<String> set = this.get(key);
+            if (set == null) {
+                set = new HashSet<String>();
+                this.put(key, set);
+            }
+            set.add(value);
+            return set;
+        }
+
+    }
 
     @Override
     public Set<String> getSupportedAnnotationTypes() {
@@ -35,6 +67,18 @@ public class SpiImplProcessor extends AbstractAnnotationProcessor {
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
 
+        if (!roundEnv.processingOver()) {
+            processAnnotations(annotations, roundEnv);
+        } else {
+            writeConfigurationFiles();
+        }
+
+        return false;
+
+    }
+
+    private void processAnnotations(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+
 
         outer:
         for (Element element : roundEnv.getElementsAnnotatedWith(SpiImpl.class)) {
@@ -43,11 +87,12 @@ public class SpiImplProcessor extends AbstractAnnotationProcessor {
             if (!ElementUtils.CheckKindOfElement.isClass(element)) {
                 getMessager().error(element, SpiImplProcessorMessages.ERROR_SPI_ANNOTATION_MUST_BE_PLACED_ON_CLASS.getMessage());
                 continue;
+
             }
 
             // Now create the service locator
 
-            TypeElement typeElement = ElementUtils.CastElement.castInterface(element);
+            TypeElement typeElement = ElementUtils.CastElement.castClass(element);
 
             // Get all interfaces
             SpiImpl annotation = typeElement.getAnnotation(SpiImpl.class);
@@ -82,33 +127,8 @@ public class SpiImplProcessor extends AbstractAnnotationProcessor {
 
                     }
 
-
-                    // Get writer for spi locator resource file
-                    SimpleResourceWriter simpleResourceWriter = spiResourceFilePool.get(typeMirrorTypeElement.getQualifiedName().toString());
-                    String filename = "META-INF/services/" + typeMirrorTypeElement.getQualifiedName().toString();
-                    if (simpleResourceWriter == null) {
-
-
-                        try {
-                            simpleResourceWriter = getFileObjectUtils().createResource(filename);
-                        } catch (IOException e) {
-                            getMessager().error(element, SpiImplProcessorMessages.ERROR_COULD_NOT_CREATE_SERVICE_LOCATOR_FILE.getMessage(), simpleResourceWriter);
-                            continue outer;
-                        }
-
-                        spiResourceFilePool.put(typeMirrorTypeElement.getQualifiedName().toString(), simpleResourceWriter);
-
-
-                    }
-
-
-                    try {
-                        simpleResourceWriter.append(typeElement.getQualifiedName().toString() + "\n");
-
-                    } catch (IOException e) {
-                        getMessager().error(element, SpiImplProcessorMessages.ERROR_COULD_NOT_APPEND_TO_SERVICE_LOCATOR_FILE.getMessage(), filename);
-                        continue outer;
-                    }
+                    // put service provider implementations in map by using the SPI fqn as key
+                    serviceImplHashMap.put(fqTypeName, typeElement.getQualifiedName().toString());
 
 
                 }
@@ -118,8 +138,79 @@ public class SpiImplProcessor extends AbstractAnnotationProcessor {
 
         }
 
-        return false;
+
     }
 
+
+    private void writeConfigurationFiles() {
+
+        // Iterate through services that were detected by the annotation processor
+        for (Map.Entry<String, Set<String>> entry : serviceImplHashMap.entrySet()) {
+
+            // look for existing resource file and load already configured values
+            String serviceProviderFile = "META-INF/services/" + entry.getKey();
+
+            Set<String> existingServiceImplementations = readServiceFile(serviceProviderFile);
+
+            // check if we have found new services
+            if (existingServiceImplementations.containsAll(entry.getValue())) {
+                getMessager().info(null, "All services implementations were already registered for ${0}", entry.getKey());
+                return;
+            }
+
+            Set<String> allServiceImplementations = new HashSet<String>(entry.getValue());
+            allServiceImplementations.addAll(existingServiceImplementations);
+
+            try {
+
+                BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(getFiler().createResource(StandardLocation.SOURCE_OUTPUT, "", serviceProviderFile).openOutputStream()));
+
+                for (String value : allServiceImplementations) {
+                    bw.write(value);
+                    bw.newLine();
+                }
+                bw.flush();
+
+                bw.close();
+                getMessager().info(null, "Written service provider registration file for ${0} containing ${1}", serviceProviderFile, allServiceImplementations);
+
+            } catch (IOException e) {
+                getMessager().error(null, "Wasn't able to write service provider registration file for ${0}", entry.getKey());
+                return;
+            }
+
+
+        }
+
+    }
+
+    protected Set<String> readServiceFile(String serviceProviderFile) {
+
+        getMessager().info(null, "Reading existing service file : ${0}", serviceProviderFile);
+
+        Set<String> resultSet = new HashSet<String>();
+
+        try {
+
+            FileObject existingFile = getFiler().getResource(StandardLocation.SOURCE_OUTPUT, "",
+                    serviceProviderFile);
+
+            BufferedReader br = new BufferedReader(existingFile.openReader(true));
+
+            String currentLine = br.readLine();
+            while (currentLine != null) {
+
+                resultSet.add(currentLine.trim());
+
+                // read next line
+                currentLine = br.readLine();
+            }
+
+        } catch (IOException e) {
+            getMessager().info(null, "Wasn't able to open existing service file for ${0}", serviceProviderFile);
+        }
+
+        return resultSet;
+    }
 
 }

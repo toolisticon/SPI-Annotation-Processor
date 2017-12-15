@@ -6,7 +6,7 @@ import io.toolisticon.spiap.api.SpiImpl;
 /**
  * Implements the addition decimal operation
  */
-@SpiImpl(value = DecimalCalculationOperation.class, id = "ADDITION", description = "Does the addition operation on two int values")
+@SpiImpl(value = DecimalCalculationOperation.class, id = "ADDITION", description = "Does the addition operation on two int values", priority = -10)
 public class AdditionDecimalOperationImpl implements DecimalCalculationOperation {
 
     @Override

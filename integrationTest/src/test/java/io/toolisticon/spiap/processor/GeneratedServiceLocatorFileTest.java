@@ -2,8 +2,10 @@ package io.toolisticon.spiap.processor;
 
 import io.toolisticon.example.spiapexample.api.DecimalCalculationOperation;
 import io.toolisticon.example.spiapexample.api.DecimalCalculationOperationServiceLocator;
+import io.toolisticon.example.spiapexample.service.AdditionDecimalOperationImpl;
 import io.toolisticon.example.spiapexample.service.DivisionDecimalOperationImpl;
 import io.toolisticon.example.spiapexample.service.MultiplicationDecimalOperationImpl;
+import io.toolisticon.example.spiapexample.service.SubtractionDecimalOperationImpl;
 import io.toolisticon.spiap.api.SpiImpl;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -115,6 +117,37 @@ public class GeneratedServiceLocatorFileTest {
 
         DecimalCalculationOperation result = DecimalCalculationOperationServiceLocator.locateByServiceKey(
                 new DecimalCalculationOperationServiceLocator.ServiceKey("XXX"));
+
+
+    }
+
+    @Test
+    public void locateAll_checkOrder() {
+
+        List<DecimalCalculationOperation> result = DecimalCalculationOperationServiceLocator.locateAll();
+
+        MatcherAssert.assertThat(result, Matchers.hasSize(4));
+
+        MatcherAssert.assertThat(result.get(0), Matchers.instanceOf(AdditionDecimalOperationImpl.class));
+        MatcherAssert.assertThat(result.get(1), Matchers.instanceOf(SubtractionDecimalOperationImpl.class));
+        MatcherAssert.assertThat(result.get(2), Matchers.instanceOf(DivisionDecimalOperationImpl.class));
+        MatcherAssert.assertThat(result.get(3), Matchers.instanceOf(MultiplicationDecimalOperationImpl.class));
+
+
+    }
+
+
+    @Test
+    public void getServiceKeys_checkOrder() {
+
+        List<DecimalCalculationOperationServiceLocator.ServiceKey> result = DecimalCalculationOperationServiceLocator.getServiceKeys();
+
+        MatcherAssert.assertThat(result, Matchers.hasSize(4));
+
+        MatcherAssert.assertThat(result.get(0).getId(), Matchers.is("ADDITION"));
+        MatcherAssert.assertThat(result.get(1).getId(), Matchers.is("SUBTRACTION"));
+        MatcherAssert.assertThat(result.get(2).getId(), Matchers.is("io.toolisticon.example.spiapexample.service.DivisionDecimalOperationImpl"));
+        MatcherAssert.assertThat(result.get(3).getId(), Matchers.is("MULTIPLICATION"));
 
 
     }
