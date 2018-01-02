@@ -1,7 +1,7 @@
 /**
  * This package contains the annotation processors.
  */
-@SpiServiceLocator(SpiImplProcessorTest.class)
+@SpiServiceLocator(ServiceProcessorTest.class)
 package io.toolisticon.spiap.processor;
 
 import io.toolisticon.spiap.api.SpiServiceLocator;

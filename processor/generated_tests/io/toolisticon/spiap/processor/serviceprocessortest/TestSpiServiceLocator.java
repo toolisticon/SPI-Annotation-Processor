@@ -1,8 +1,7 @@
-package ${ package };
+package io.toolisticon.spiap.processor.serviceprocessortest;
 
-import ${ canonicalName };
+import io.toolisticon.spiap.processor.serviceprocessortest.TestSpi;
 import io.toolisticon.spiap.api.Service;
-import io.toolisticon.spiap.api.Services;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,7 +15,7 @@ import java.util.ServiceLoader;
 /**
  * A generic service locator.
  */
-public class ${ simpleName }ServiceLocator {
+public class TestSpiServiceLocator {
 
     /**
      * Exception that is thrown if a specific service implementation can't be found.
@@ -24,7 +23,7 @@ public class ${ simpleName }ServiceLocator {
      public static class ImplementationNotFoundException extends RuntimeException{
 
             public ImplementationNotFoundException(String id) {
-                super(String.format("Couldn't find implementation for spi ${simpleName} with id : '%s'",id));
+                super(String.format("Couldn't find implementation for spi TestSpi with id : '%s'",id));
             }
 
         }
@@ -38,20 +37,10 @@ public class ${ simpleName }ServiceLocator {
         private final String description;
         private final int priority;
 
-        private ServiceKey(${ simpleName } serviceImpl) {
+        private ServiceKey(TestSpi serviceImpl) {
 
             Service serviceAnnotation = serviceImpl.getClass().getAnnotation(Service.class);
-            if (serviceAnnotation == null) {
-                Services servicesAnnotation = serviceImpl.getClass().getAnnotation(Services.class);
-                if (servicesAnnotation != null) {
-                    for (Service service : servicesAnnotation.value()) {
-                        if (${ simpleName }.class.equals(service.value())) {
-                            serviceAnnotation = service;
-                            break;
-                        }
-                    }
-                }
-            }
+
             id = serviceAnnotation != null && !serviceAnnotation.id().equals("") ? serviceAnnotation.id() : serviceImpl.getClass().getCanonicalName();
             description = serviceAnnotation != null && !serviceAnnotation.description().equals("") ? serviceAnnotation.description() : "";
             priority = serviceAnnotation != null ? serviceAnnotation.priority() : 0;
@@ -86,9 +75,9 @@ public class ${ simpleName }ServiceLocator {
    /**
     * Comparator which allows sorting of service implementations by priority.
     */
-    public static class ServicePriorityComparator implements Comparator<${ simpleName }> {
+    public static class ServicePriorityComparator implements Comparator<TestSpi> {
 
-        public int compare (${ simpleName } o1,${ simpleName } o2){
+        public int compare (TestSpi o1,TestSpi o2){
             if (o1 == null && o2 == null) {
                 return 0;
             } else if (o1 != null && o2 == null) {
@@ -114,11 +103,11 @@ public class ${ simpleName }ServiceLocator {
      * Get {@link ServiceKey} for all available implementations.
      * @return a list that contains ServiceKeys for all available service implementations, or an empty List if none could be found.
      */
-    public static List<${ simpleName }ServiceLocator.ServiceKey> getServiceKeys() {
-        List<${ simpleName }ServiceLocator.ServiceKey> result = new ArrayList<${ simpleName }ServiceLocator.ServiceKey>();
+    public static List<TestSpiServiceLocator.ServiceKey> getServiceKeys() {
+        List<TestSpiServiceLocator.ServiceKey> result = new ArrayList<TestSpiServiceLocator.ServiceKey>();
 
-        for (${ simpleName } serviceImpl : locateAll()) {
-            result.add(new ${ simpleName }ServiceLocator.ServiceKey(serviceImpl));
+        for (TestSpi serviceImpl : locateAll()) {
+            result.add(new TestSpiServiceLocator.ServiceKey(serviceImpl));
         }
 
         return result;
@@ -131,7 +120,7 @@ public class ${ simpleName }ServiceLocator {
      * @return the service implementation with the service key
      * @throws ImplementationNotFoundException if either passed service key, it's id are null or if the service implementation can't be found.
      */
-    public static ${ simpleName } locateByServiceKey(${ simpleName }ServiceLocator.ServiceKey serviceKey) {
+    public static TestSpi locateByServiceKey(TestSpiServiceLocator.ServiceKey serviceKey) {
 
         if (serviceKey == null) {
             throw new ImplementationNotFoundException(null);
@@ -148,10 +137,10 @@ public class ${ simpleName }ServiceLocator {
      * @return the service implementation with the id
      * @throws ImplementationNotFoundException if either passed id is null or if the service implementation can't be found.
      */
-    public static ${ simpleName } locateById(String id) {
+    public static TestSpi locateById(String id) {
 
         if (id != null) {
-            for (${ simpleName } serviceImpl : locateAll()) {
+            for (TestSpi serviceImpl : locateAll()) {
 
                 ServiceKey sk = new ServiceKey(serviceImpl);
                 if (id.equals(sk.getId())) {
@@ -167,7 +156,7 @@ public class ${ simpleName }ServiceLocator {
     /**
      * Hide constructor.
      */
-    private ${ simpleName }ServiceLocator() {
+    private TestSpiServiceLocator() {
     }
 
     /**
@@ -176,19 +165,19 @@ public class ${ simpleName }ServiceLocator {
      * Successive calls may return different service implementations.
      * @return returns the first Implementation found via locateAll method call.
      **/
-    public static ${ simpleName } locate() {
+    public static TestSpi locate() {
         final List services = locateAll();
-        return services.isEmpty() ? (${ simpleName })null : (${ simpleName })services.get(0);
+        return services.isEmpty() ? (TestSpi)null : (TestSpi)services.get(0);
     }
 
     /**
      * Locates all available service implementations.
      * @return returns a list containing all available service implementations or an empty list, if no implementation can be found.
      */
-    public static List< ${ simpleName } > locateAll() {
+    public static List< TestSpi > locateAll() {
 
-        final Iterator<${ simpleName }> iterator = ServiceLoader.load(${ simpleName }.class).iterator();
-        final List<${ simpleName }> services = new ArrayList<${ simpleName }>();
+        final Iterator<TestSpi> iterator = ServiceLoader.load(TestSpi.class).iterator();
+        final List<TestSpi> services = new ArrayList<TestSpi>();
 
         while (iterator.hasNext()) {
             try {

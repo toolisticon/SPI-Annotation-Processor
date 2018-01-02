@@ -1,6 +1,6 @@
-package io.toolisticon.spiap.processor.spiimplprocessortest;
+package io.toolisticon.spiap.processor.serviceprocessortest;
 
-import io.toolisticon.spiap.processor.spiimplprocessortest.TestSpi;
+import io.toolisticon.spiap.processor.serviceprocessortest.TestSpi;
 import io.toolisticon.spiap.api.SpiImpl;
 
 import java.util.ArrayList;

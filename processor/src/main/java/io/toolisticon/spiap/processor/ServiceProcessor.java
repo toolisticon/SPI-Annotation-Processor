@@ -3,10 +3,14 @@ package io.toolisticon.spiap.processor;
 import de.holisticon.annotationprocessortoolkit.AbstractAnnotationProcessor;
 import de.holisticon.annotationprocessortoolkit.generators.SimpleResourceWriter;
 import de.holisticon.annotationprocessortoolkit.tools.AnnotationUtils;
+import de.holisticon.annotationprocessortoolkit.tools.AnnotationValueUtils;
 import de.holisticon.annotationprocessortoolkit.tools.ElementUtils;
-import io.toolisticon.spiap.api.SpiImpl;
+import io.toolisticon.spiap.api.Service;
+import io.toolisticon.spiap.api.Services;
 
 import javax.annotation.processing.RoundEnvironment;
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
@@ -16,18 +20,17 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 /**
- * Annotation Processor for {@link SpiImpl}.
+ * Annotation Processor for {@link Service} and {@link Services}.
  */
-public class SpiImplProcessor extends AbstractAnnotationProcessor {
+public class ServiceProcessor extends AbstractAnnotationProcessor {
 
-    private final static Set<String> SUPPORTED_ANNOTATIONS = createSupportedAnnotationSet(SpiImpl.class);
+    private final static Set<String> SUPPORTED_ANNOTATIONS = createSupportedAnnotationSet(Services.class, Service.class);
 
     private final static Map<String, SimpleResourceWriter> spiResourceFilePool = new HashMap<String, SimpleResourceWriter>();
 
@@ -79,66 +82,89 @@ public class SpiImplProcessor extends AbstractAnnotationProcessor {
 
     private void processAnnotations(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
 
+        // process Services annotation
+        for (Element element : roundEnv.getElementsAnnotatedWith(Services.class)) {
 
-        outer:
-        for (Element element : roundEnv.getElementsAnnotatedWith(SpiImpl.class)) {
+            Service[] services = element.getAnnotation(Services.class).value();
+            AnnotationMirror servicesAnnotationMirror = AnnotationUtils.getAnnotationMirror(element, Services.class);
 
-            // check if it is place on Class
-            if (!ElementUtils.CheckKindOfElement.isClass(element)) {
-                getMessager().error(element, SpiImplProcessorMessages.ERROR_SPI_ANNOTATION_MUST_BE_PLACED_ON_CLASS.getMessage());
-                continue;
+            for (Service service : services) {
 
-            }
+                AnnotationValue annotationValue = AnnotationUtils.getAnnotationValueOfAttribute(servicesAnnotationMirror);
+                AnnotationMirror[] serviceAnnotationMirrors = AnnotationValueUtils.getAnnotationValueArray(annotationValue);
 
-            // Now create the service locator
-
-            TypeElement typeElement = ElementUtils.CastElement.castClass(element);
-
-            // Get all interfaces
-            SpiImpl annotation = typeElement.getAnnotation(SpiImpl.class);
-
-            if (annotation != null) {
-
-                Set<String> spiInterfaces = new HashSet<String>();
-                String[] spiAttributeTypes = AnnotationUtils.getClassArrayAttributeFromAnnotationAsFqn(typeElement, SpiImpl.class);
-                if (spiAttributeTypes != null) {
-                    spiInterfaces.addAll(Arrays.asList(spiAttributeTypes));
+                //getMessager().error(element, "GOT ENCAPSULATED SERVICE MIRROR : " + annotationValue.toString());
+                for (AnnotationMirror serviceAnnotationMirror : serviceAnnotationMirrors) {
+                    processAnnotation(serviceAnnotationMirror, element);
                 }
-
-
-                for (String fqTypeName : spiInterfaces) {
-
-
-                    TypeMirror typeMirror = getTypeUtils().doTypeRetrieval().getTypeMirror(fqTypeName);
-                    TypeElement typeMirrorTypeElement = (TypeElement) getTypeUtils().getTypes().asElement(typeMirror);
-
-                    //check if type is interface
-                    if (!ElementUtils.CheckKindOfElement.isInterface(typeMirrorTypeElement)) {
-                        getMessager().error(element, SpiImplProcessorMessages.ERROR_VALUE_ATTRIBUTE_MUST_ONLY_CONTAIN_INTERFACES.getMessage(), typeMirrorTypeElement.getQualifiedName().toString());
-                        continue outer;
-                    }
-
-
-                    // check if annotatedElement is assignable to spi interface == implements the spi interface
-                    if (!getTypeUtils().doTypeComparison().isAssignableTo(typeElement, typeMirror)) {
-
-                        getMessager().error(element, SpiImplProcessorMessages.ERROR_ANNOTATED_CLASS_MUST_IMPLEMENT_CONFIGURED_INTERFACES.getMessage(), typeMirrorTypeElement.getQualifiedName().toString());
-                        continue outer;
-
-                    }
-
-                    // put service provider implementations in map by using the SPI fqn as key
-                    serviceImplHashMap.put(fqTypeName, typeElement.getQualifiedName().toString());
-
-
-                }
-
             }
-
 
         }
 
 
+        // process Service annotation
+        for (Element element : roundEnv.getElementsAnnotatedWith(Service.class)) {
+
+            AnnotationMirror serviceAnnotationMirror = AnnotationUtils.getAnnotationMirror(element, Service.class);
+
+            processAnnotation(serviceAnnotationMirror, element);
+
+        }
+
+
+    }
+
+    private void processAnnotation(AnnotationMirror serviceAnnotation, Element annotatedElement) {
+
+        // check if it is placed on Class
+        if (!ElementUtils.CheckKindOfElement.isClass(annotatedElement)) {
+            getMessager().error(annotatedElement, ServiceProcessorMessages.ERROR_SPI_ANNOTATION_MUST_BE_PLACED_ON_CLASS.getMessage());
+            return;
+
+        }
+
+        // Now create the service locator
+
+        TypeElement typeElement = ElementUtils.CastElement.castClass(annotatedElement);
+
+
+        if (serviceAnnotation != null) {
+
+            Set<String> spiInterfaces = new HashSet<String>();
+            String spiAttributeTypes = AnnotationValueUtils.getTypeMirrorValue(AnnotationUtils.getAnnotationValueOfAttribute(serviceAnnotation)).toString();
+            if (spiAttributeTypes != null) {
+                spiInterfaces.add(spiAttributeTypes);
+            }
+
+
+            for (String fqTypeName : spiInterfaces) {
+
+
+                TypeMirror typeMirror = getTypeUtils().doTypeRetrieval().getTypeMirror(fqTypeName);
+                TypeElement typeMirrorTypeElement = (TypeElement) getTypeUtils().getTypes().asElement(typeMirror);
+
+                //check if type is interface
+                if (!ElementUtils.CheckKindOfElement.isInterface(typeMirrorTypeElement)) {
+                    getMessager().error(annotatedElement, ServiceProcessorMessages.ERROR_VALUE_ATTRIBUTE_MUST_ONLY_CONTAIN_INTERFACES.getMessage(), typeMirrorTypeElement.getQualifiedName().toString());
+                    break;
+                }
+
+
+                // check if annotatedElement is assignable to spi interface == implements the spi interface
+                if (!getTypeUtils().doTypeComparison().isAssignableTo(typeElement, typeMirror)) {
+
+                    getMessager().error(annotatedElement, ServiceProcessorMessages.ERROR_ANNOTATED_CLASS_MUST_IMPLEMENT_CONFIGURED_INTERFACES.getMessage(), typeMirrorTypeElement.getQualifiedName().toString());
+                    break;
+
+                }
+
+                // put service provider implementations in map by using the SPI fqn as key
+                serviceImplHashMap.put(fqTypeName, typeElement.getQualifiedName().toString());
+
+
+            }
+
+        }
     }
 
 

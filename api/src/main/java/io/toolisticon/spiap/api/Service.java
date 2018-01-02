@@ -10,12 +10,12 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(value = {ElementType.TYPE})
-public @interface SpiImpl {
+public @interface Service {
 
     /**
-     * The SPI interfaces implemented by the annotated class.
+     * The SPI interface implemented by the annotated class.
      */
-    Class<?>[] value() default {};
+    Class<?> value();
 
     /**
      * This optional attribute is used to declare an identifier for this implementation.
@@ -31,8 +31,8 @@ public @interface SpiImpl {
     /**
      * This optional attribute defines the order of the service implementations returned by the generated service allocator.
      * Lower value are defining a higher priority. Defaults to 0.
-     * @return
      */
     int priority() default 0;
+
 
 }

@@ -5,4 +5,4 @@
 package io.toolisticon.spiap.processor;
 
 import io.toolisticon.spiap.api.SpiServiceLocator;
-import io.toolisticon.spiap.processor.spiimplprocessortest.TestSpi;
+import io.toolisticon.spiap.processor.serviceprocessortest.TestSpi;

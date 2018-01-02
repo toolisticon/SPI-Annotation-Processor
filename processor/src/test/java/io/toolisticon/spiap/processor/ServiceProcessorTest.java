@@ -16,21 +16,21 @@ import java.util.List;
  * Tests of {@link SpiProcessor}.
  */
 @RunWith(Parameterized.class)
-public class SpiImplProcessorTest extends AbstractAnnotationProcessorIntegrationTest<SpiImplProcessor> {
+public class ServiceProcessorTest extends AbstractAnnotationProcessorIntegrationTest<ServiceProcessor> {
 
 
-    public SpiImplProcessorTest(String description, AnnotationProcessorIntegrationTestConfiguration configuration) {
+    public ServiceProcessorTest(String description, AnnotationProcessorIntegrationTestConfiguration configuration) {
         super(configuration);
     }
 
     @Before
     public void init() {
-        SpiImplProcessorMessages.setPrintMessageCodes(true);
+        ServiceProcessorMessages.setPrintMessageCodes(true);
     }
 
     @Override
-    protected SpiImplProcessor getAnnotationProcessor() {
-        return new SpiImplProcessor();
+    protected ServiceProcessor getAnnotationProcessor() {
+        return new ServiceProcessor();
     }
 
     @Parameterized.Parameters(name = "{index}: \"{0}\"")
@@ -41,7 +41,7 @@ public class SpiImplProcessorTest extends AbstractAnnotationProcessorIntegration
                         "Test valid usage",
                         AnnotationProcessorIntegrationTestConfigurationBuilder
                                 .createTestConfig()
-                                .setSourceFileToCompile("spiimplprocessor/TestcaseValidUsage.java")
+                                .setSourceFileToCompile("serviceprocessor/TestcaseValidUsage.java")
                                 .compilationShouldSucceed()
                                 .build()
                 },
@@ -49,10 +49,10 @@ public class SpiImplProcessorTest extends AbstractAnnotationProcessorIntegration
                         "Test annotation must be placed on class",
                         AnnotationProcessorIntegrationTestConfigurationBuilder
                                 .createTestConfig()
-                                .setSourceFileToCompile("spiimplprocessor/TestcaseUsageOnInterface.java")
+                                .setSourceFileToCompile("serviceprocessor/TestcaseUsageOnInterface.java")
                                 .compilationShouldFail()
                                 .addMessageValidator()
-                                .setErrorChecks(SpiImplProcessorMessages.ERROR_SPI_ANNOTATION_MUST_BE_PLACED_ON_CLASS.getCode())
+                                .setErrorChecks(ServiceProcessorMessages.ERROR_SPI_ANNOTATION_MUST_BE_PLACED_ON_CLASS.getCode())
                                 .finishMessageValidator()
                                 .build()
                 },
@@ -60,10 +60,10 @@ public class SpiImplProcessorTest extends AbstractAnnotationProcessorIntegration
                         "Test annotation value attribute must only contain interfaces",
                         AnnotationProcessorIntegrationTestConfigurationBuilder
                                 .createTestConfig()
-                                .setSourceFileToCompile("spiimplprocessor/TestcaseValueAttributeMustOnlyContainInterfaces.java")
+                                .setSourceFileToCompile("serviceprocessor/TestcaseValueAttributeMustOnlyContainInterfaces.java")
                                 .compilationShouldFail()
                                 .addMessageValidator()
-                                .setErrorChecks(SpiImplProcessorMessages.ERROR_VALUE_ATTRIBUTE_MUST_ONLY_CONTAIN_INTERFACES.getCode())
+                                .setErrorChecks(ServiceProcessorMessages.ERROR_VALUE_ATTRIBUTE_MUST_ONLY_CONTAIN_INTERFACES.getCode())
                                 .finishMessageValidator()
                                 .build()
                 },
@@ -71,10 +71,10 @@ public class SpiImplProcessorTest extends AbstractAnnotationProcessorIntegration
                         "Test annotated type must implement configured interfaces",
                         AnnotationProcessorIntegrationTestConfigurationBuilder
                                 .createTestConfig()
-                                .setSourceFileToCompile("spiimplprocessor/TestcaseMustImplementAnnotatedInterface.java")
+                                .setSourceFileToCompile("serviceprocessor/TestcaseMustImplementAnnotatedInterface.java")
                                 .compilationShouldFail()
                                 .addMessageValidator()
-                                .setErrorChecks(SpiImplProcessorMessages.ERROR_ANNOTATED_CLASS_MUST_IMPLEMENT_CONFIGURED_INTERFACES.getCode())
+                                .setErrorChecks(ServiceProcessorMessages.ERROR_ANNOTATED_CLASS_MUST_IMPLEMENT_CONFIGURED_INTERFACES.getCode())
                                 .finishMessageValidator()
                                 .build()
                 },
@@ -82,7 +82,15 @@ public class SpiImplProcessorTest extends AbstractAnnotationProcessorIntegration
                         "Test processing should succees with plain interfaces",
                         AnnotationProcessorIntegrationTestConfigurationBuilder
                                 .createTestConfig()
-                                .setSourceFileToCompile("spiimplprocessor/TestcaseValidUseWithPlainInterface.java")
+                                .setSourceFileToCompile("serviceprocessor/TestcaseValidUseWithPlainInterface.java")
+                                .compilationShouldSucceed()
+                                .build()
+                },
+                {
+                        "Test multiple services implemented",
+                        AnnotationProcessorIntegrationTestConfigurationBuilder
+                                .createTestConfig()
+                                .setSourceFileToCompile("serviceprocessor/TestcaseMultipleServices.java")
                                 .compilationShouldSucceed()
                                 .build()
                 },

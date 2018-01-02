@@ -4,12 +4,12 @@ package io.toolisticon.spiap.processor;
 /**
  * SpiProcessorMessages used by annotation processors of Advice annotations.
  */
-public enum SpiImplProcessorMessages {
+public enum ServiceProcessorMessages {
 
 
-    ERROR_SPI_ANNOTATION_MUST_BE_PLACED_ON_CLASS("ERROR_001", "SpiImpl annotation must only be used on Classes"),
-    ERROR_VALUE_ATTRIBUTE_MUST_ONLY_CONTAIN_INTERFACES("ERROR_002", "SpiImpl annotation only accepts interfaces - ${0} is no interface"),
-    ERROR_ANNOTATED_CLASS_MUST_IMPLEMENT_CONFIGURED_INTERFACES("ERROR_003", "SpiImpl doesn't implement the ${0} interface"),
+    ERROR_SPI_ANNOTATION_MUST_BE_PLACED_ON_CLASS("ERROR_001", "Service annotation must only be used on Classes"),
+    ERROR_VALUE_ATTRIBUTE_MUST_ONLY_CONTAIN_INTERFACES("ERROR_002", "Service annotation only accepts interfaces - ${0} is no interface"),
+    ERROR_ANNOTATED_CLASS_MUST_IMPLEMENT_CONFIGURED_INTERFACES("ERROR_003", "Service doesn't implement the ${0} interface"),
     ERROR_COULD_NOT_CREATE_SERVICE_LOCATOR_FILE("ERROR_004", "Cannot open spi service location file for writing : ${0}"),
     ERROR_COULD_NOT_APPEND_TO_SERVICE_LOCATOR_FILE("ERROR_005", "Cannot append to spi service location file : ${0}");
 
@@ -34,7 +34,7 @@ public enum SpiImplProcessorMessages {
      * @param code    the message code
      * @param message the message text
      */
-    private SpiImplProcessorMessages(String code, String message) {
+    private ServiceProcessorMessages(String code, String message) {
         this.code = code;
         this.message = message;
     }
@@ -64,7 +64,7 @@ public enum SpiImplProcessorMessages {
      * @param printMessageCodes defines if message codes should be part of the message text
      */
     public static void setPrintMessageCodes(boolean printMessageCodes) {
-        SpiImplProcessorMessages.printMessageCodes = printMessageCodes;
+        ServiceProcessorMessages.printMessageCodes = printMessageCodes;
     }
 
 }

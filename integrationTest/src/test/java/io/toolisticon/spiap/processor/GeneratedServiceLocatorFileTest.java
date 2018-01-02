@@ -6,7 +6,8 @@ import io.toolisticon.example.spiapexample.service.AdditionDecimalOperationImpl;
 import io.toolisticon.example.spiapexample.service.DivisionDecimalOperationImpl;
 import io.toolisticon.example.spiapexample.service.MultiplicationDecimalOperationImpl;
 import io.toolisticon.example.spiapexample.service.SubtractionDecimalOperationImpl;
-import io.toolisticon.spiap.api.SpiImpl;
+import io.toolisticon.spiap.api.Service;
+import io.toolisticon.spiap.api.Services;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -51,7 +52,21 @@ public class GeneratedServiceLocatorFileTest {
         Set<String> serviceIds = new HashSet<String>();
 
         for (DecimalCalculationOperation service : services) {
-            String id = service.getClass().getAnnotation(SpiImpl.class).id();
+            Service serviceAnnotation = service.getClass().getAnnotation(Service.class);
+            if (serviceAnnotation == null) {
+                Services servicesAnnotation = service.getClass().getAnnotation(Services.class);
+                if (servicesAnnotation != null) {
+                    for (Service tmpService : servicesAnnotation.value()) {
+                        if (DecimalCalculationOperation.class.equals(tmpService.value())) {
+                            serviceAnnotation = tmpService;
+                            break;
+                        }
+                    }
+                }
+            }
+
+
+            String id = serviceAnnotation.id();
             serviceIds.add(id != null && !id.isEmpty() ? id : service.getClass().getCanonicalName());
         }
 

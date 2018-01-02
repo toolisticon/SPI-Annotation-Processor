@@ -1,2 +1,2 @@
 io.toolisticon.spiap.processor.SpiProcessor
-io.toolisticon.spiap.processor.SpiImplProcessor
+io.toolisticon.spiap.processor.ServiceProcessor
