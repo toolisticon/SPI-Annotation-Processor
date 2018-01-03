@@ -19,13 +19,19 @@ Annotation processor that
 
 # How does it work?
 
-First you need to add the SPI annotation processor dependency to your project.
-Since it has to be there just at compile time, it's ok to use provided scope.
+First you need to add the SPI annotation processor dependencies to your project.
+Since the annotation processor has to be there just at compile time, it's ok to use provided scope.
 
 	<dependencies>
+	    <!-- api is just needed in compile scope if you want to use the ServiceLocator features -->
 	    <dependency>
-	        <groupId>de.holisticon.tools.spiap</groupId>
-	        <artifactId>spi-ap-processor</artifactId>
+	        <groupId>io.toolisticon.spiap</groupId>
+	        <artifactId>spiap-api</artifactId>
+	    </dependency>
+	    <!-- must be on provided scope since it is just needed at compile time -->
+	    <dependency>
+	        <groupId>io.toolisticon.spiap</groupId>
+	        <artifactId>spiap-processor</artifactId>
 	        <scope>provided</scope>
 	    </dependency>
 	</dependencies>
@@ -83,9 +89,9 @@ The locator will be created in the annotated package. It is named like the SPI s
 
 
 ## How to register a service implementation
-Just add a SpiImpl annotation to your service implementation:
+Just add a Service annotation to your service implementation:
 
-	@SpiImpl(spis = {"de.holisticon.example.spiapexample.api.ExampleSpiInterface"})
+	@Service(value = ExampleSpiInterface.class, id = "YOUR_OPTIONAL_SERVICE_ID", description = "OPTIONAL DESCRIPTION", priority = 0)
 	public class ExampleSpiService implements ExampleSpiInterface {
 	    @Override
             public String doSomething() {
@@ -93,6 +99,29 @@ Just add a SpiImpl annotation to your service implementation:
             }
 	}
 
+Service annotations mandatory value must declare the SPI you want the service class to be registered to.
+All other annotation attributes are optional. 
+
+- id defines a custom id which can be used to locate a specific servics implementation via the generated service locator class. Defaults to fully qualified service class name in generated service locator.
+- description declares a short description about the implementation
+- priority is used to define a specific order in which the services are located
+
+It's also possible to implement more than one SPI in a class by using the Services annotation:
+        
+	@Services({
+	    @Service(value = ExampleSpiInterface1.class, id = "YOUR_OPTIONAL_SERVICE_ID", description = "OPTIONAL DESCRIPTION", priority = 0),
+	    @Service(value = ExampleSpiInterface2.class)
+	})
+	public class ExampleSpiService implements ExampleSpiInterface1, ExampeSpiInterface2 {
+	    @Override
+            public String doSomething1() {
+                return "IT WORKS !";
+            }
+	    @Override
+            public String doSomething2() {
+                return "IT WORKS TOO!";
+            }
+	}
 
 ## How to use the service locator
 
@@ -101,6 +130,8 @@ Just add a SpiImpl annotation to your service implementation:
 
 See our examples subprojects about how to use the annotations.
 
+## Disable service implementations in the service locator
+Just add the OutOfService annotation next to the Services or Service annotation to disable the service implementation in the service locator.
 
 # Contributing
 
