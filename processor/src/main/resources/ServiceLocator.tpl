@@ -3,6 +3,7 @@ package ${ package };
 import ${ canonicalName };
 import io.toolisticon.spiap.api.Service;
 import io.toolisticon.spiap.api.Services;
+import io.toolisticon.spiap.api.OutOfService;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -192,7 +193,11 @@ public class ${ simpleName }ServiceLocator {
 
         while (iterator.hasNext()) {
             try {
-                services.add(iterator.next());
+
+                ${ simpleName } service = iterator.next();
+                if (service.getClass().getAnnotation(OutOfService.class) == null){
+                    services.add(service);
+                }
             }
             catch (Error e) {
                 e.printStackTrace(System.err);
