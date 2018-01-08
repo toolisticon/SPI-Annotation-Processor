@@ -94,6 +94,18 @@ public class ServiceProcessorTest extends AbstractAnnotationProcessorIntegration
                                 .compilationShouldSucceed()
                                 .build()
                 },
+                {
+
+                        "Test OutOfService annotated services shouldn't be processed",
+                        AnnotationProcessorIntegrationTestConfigurationBuilder
+                                .createTestConfig()
+                                .setSourceFileToCompile("serviceprocessor/TestcaseDontProcessOutOfServiceService.java")
+                                .addMessageValidator()
+                                .setInfoChecks(ServiceProcessorMessages.INFO_SKIP_ELEMENT_ANNOTATED_AS_OUT_OF_SERVICE.getCode())
+                                .finishMessageValidator()
+                                .compilationShouldSucceed()
+                                .build()
+                },
 
 
         });

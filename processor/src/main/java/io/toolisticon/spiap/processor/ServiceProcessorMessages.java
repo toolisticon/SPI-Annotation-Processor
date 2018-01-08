@@ -1,6 +1,8 @@
 package io.toolisticon.spiap.processor;
 
 
+import io.toolisticon.spiap.api.OutOfService;
+
 /**
  * SpiProcessorMessages used by annotation processors of Advice annotations.
  */
@@ -11,7 +13,8 @@ public enum ServiceProcessorMessages {
     ERROR_VALUE_ATTRIBUTE_MUST_ONLY_CONTAIN_INTERFACES("ERROR_002", "Service annotation only accepts interfaces - ${0} is no interface"),
     ERROR_ANNOTATED_CLASS_MUST_IMPLEMENT_CONFIGURED_INTERFACES("ERROR_003", "Service doesn't implement the ${0} interface"),
     ERROR_COULD_NOT_CREATE_SERVICE_LOCATOR_FILE("ERROR_004", "Cannot open spi service location file for writing : ${0}"),
-    ERROR_COULD_NOT_APPEND_TO_SERVICE_LOCATOR_FILE("ERROR_005", "Cannot append to spi service location file : ${0}");
+    ERROR_COULD_NOT_APPEND_TO_SERVICE_LOCATOR_FILE("ERROR_005", "Cannot append to spi service location file : ${0}"),
+    INFO_SKIP_ELEMENT_ANNOTATED_AS_OUT_OF_SERVICE("INFO_001", "Skipped processing for service(s) class ${0} annotated with " + OutOfService.class.getSimpleName() + " annotation");
 
 
     /**

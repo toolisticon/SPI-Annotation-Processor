@@ -5,6 +5,7 @@ import de.holisticon.annotationprocessortoolkit.generators.SimpleResourceWriter;
 import de.holisticon.annotationprocessortoolkit.tools.AnnotationUtils;
 import de.holisticon.annotationprocessortoolkit.tools.AnnotationValueUtils;
 import de.holisticon.annotationprocessortoolkit.tools.ElementUtils;
+import io.toolisticon.spiap.api.OutOfService;
 import io.toolisticon.spiap.api.Service;
 import io.toolisticon.spiap.api.Services;
 
@@ -85,6 +86,11 @@ public class ServiceProcessor extends AbstractAnnotationProcessor {
         // process Services annotation
         for (Element element : roundEnv.getElementsAnnotatedWith(Services.class)) {
 
+            // Check for OutOfService annotation
+            if (checkSkipProcessingBecauseOfOutOfServiceAnnotation(element)) {
+                continue;
+            }
+
             Service[] services = element.getAnnotation(Services.class).value();
             AnnotationMirror servicesAnnotationMirror = AnnotationUtils.getAnnotationMirror(element, Services.class);
 
@@ -105,6 +111,11 @@ public class ServiceProcessor extends AbstractAnnotationProcessor {
         // process Service annotation
         for (Element element : roundEnv.getElementsAnnotatedWith(Service.class)) {
 
+            // Check for OutOfService annotation
+            if (checkSkipProcessingBecauseOfOutOfServiceAnnotation(element)) {
+                continue;
+            }
+
             AnnotationMirror serviceAnnotationMirror = AnnotationUtils.getAnnotationMirror(element, Service.class);
 
             processAnnotation(serviceAnnotationMirror, element);
@@ -112,6 +123,16 @@ public class ServiceProcessor extends AbstractAnnotationProcessor {
         }
 
 
+    }
+
+    private boolean checkSkipProcessingBecauseOfOutOfServiceAnnotation(Element element) {
+        // Check for OutOfService annotation
+        if (element.getAnnotation(OutOfService.class) != null) {
+            // skip processing of element
+            getMessager().info(element, ServiceProcessorMessages.INFO_SKIP_ELEMENT_ANNOTATED_AS_OUT_OF_SERVICE.getMessage(), ElementUtils.CastElement.castClass(element).getQualifiedName());
+            return true;
+        }
+        return false;
     }
 
     private void processAnnotation(AnnotationMirror serviceAnnotation, Element annotatedElement) {

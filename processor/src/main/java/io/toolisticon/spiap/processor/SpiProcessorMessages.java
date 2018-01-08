@@ -1,6 +1,8 @@
 package io.toolisticon.spiap.processor;
 
 
+import io.toolisticon.spiap.api.OutOfService;
+
 /**
  * SpiProcessorMessages used by annotation processors of Advice annotations.
  */
@@ -8,7 +10,8 @@ public enum SpiProcessorMessages {
 
 
     ERROR_SPI_ANNOTATION_MUST_BE_PLACED_ON_INTERFACE("ERROR_001", "Spi annotation must only be used on interfaces"),
-    ERROR_COULD_NOT_CREATE_SERVICE_LOCATOR("ERROR_002", "Couldn't create Spi Service Locator : ${0}");
+    ERROR_COULD_NOT_CREATE_SERVICE_LOCATOR("ERROR_002", "Couldn't create Spi Service Locator : ${0}"),
+    ;
 
 
     /**
