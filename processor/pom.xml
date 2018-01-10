@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>spiap-processor</artifactId>
@@ -16,7 +17,7 @@
 
 
         <dependency>
-            <groupId>de.holisticon.annotationprocessortoolkit</groupId>
+            <groupId>io.toolisticon.annotationprocessortoolkit</groupId>
             <artifactId>annotationprocessor</artifactId>
         </dependency>
 
@@ -29,11 +30,10 @@
         <dependency>
             <groupId>com.google.testing.compile</groupId>
             <artifactId>compile-testing</artifactId>
-            <scope>test</scope>
         </dependency>
 
         <dependency>
-            <groupId>de.holisticon.annotationprocessortoolkit</groupId>
+            <groupId>io.toolisticon.annotationprocessortoolkit</groupId>
             <artifactId>testhelper</artifactId>
         </dependency>
 
@@ -60,17 +60,24 @@
 
                         <configuration>
 
+                            <artifactSet>
+                                <excludes>
+                                    <exclude>io.toolisticon.spiap:spiap-api</exclude>
+
+                                </excludes>
+                            </artifactSet>
+
                             <!--
-                                usually you should repacke all referenced 3RD party libraries into your annotation processor jar.
+                                usually you should repackage all referenced 3RD party libraries into your annotation processor jar.
                                     - because the annotation processor should always be linked as provided dependency when it is used.
                                     - to prevent a version conflict of your annotation processors dependencies and the applications dependencies.
                             -->
 
                             <relocations>
                                 <relocation>
-                                    <pattern>de.holisticon.annotationprocessortoolkit</pattern>
+                                    <pattern>io.toolisticon.annotationprocessortoolkit</pattern>
                                     <shadedPattern>
-                                        io.toolisticon.spiap.processor._3rdparty.de.holisticon.annotationprocessortoolkit
+                                        io.toolisticon.spiap.processor._3rdparty.io.toolisticon.annotationprocessortoolkit
                                     </shadedPattern>
                                 </relocation>
 

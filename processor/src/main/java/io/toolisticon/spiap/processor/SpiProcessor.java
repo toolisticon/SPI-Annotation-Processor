@@ -1,9 +1,9 @@
 package io.toolisticon.spiap.processor;
 
-import de.holisticon.annotationprocessortoolkit.AbstractAnnotationProcessor;
-import de.holisticon.annotationprocessortoolkit.generators.SimpleJavaWriter;
-import de.holisticon.annotationprocessortoolkit.tools.AnnotationUtils;
-import de.holisticon.annotationprocessortoolkit.tools.ElementUtils;
+import io.toolisticon.annotationprocessortoolkit.AbstractAnnotationProcessor;
+import io.toolisticon.annotationprocessortoolkit.generators.SimpleJavaWriter;
+import io.toolisticon.annotationprocessortoolkit.tools.AnnotationUtils;
+import io.toolisticon.annotationprocessortoolkit.tools.ElementUtils;
 import io.toolisticon.spiap.api.Spi;
 import io.toolisticon.spiap.api.SpiServiceLocator;
 

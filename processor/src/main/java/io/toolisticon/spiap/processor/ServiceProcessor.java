@@ -1,10 +1,10 @@
 package io.toolisticon.spiap.processor;
 
-import de.holisticon.annotationprocessortoolkit.AbstractAnnotationProcessor;
-import de.holisticon.annotationprocessortoolkit.generators.SimpleResourceWriter;
-import de.holisticon.annotationprocessortoolkit.tools.AnnotationUtils;
-import de.holisticon.annotationprocessortoolkit.tools.AnnotationValueUtils;
-import de.holisticon.annotationprocessortoolkit.tools.ElementUtils;
+import io.toolisticon.annotationprocessortoolkit.AbstractAnnotationProcessor;
+import io.toolisticon.annotationprocessortoolkit.generators.SimpleResourceWriter;
+import io.toolisticon.annotationprocessortoolkit.tools.AnnotationUtils;
+import io.toolisticon.annotationprocessortoolkit.tools.AnnotationValueUtils;
+import io.toolisticon.annotationprocessortoolkit.tools.ElementUtils;
 import io.toolisticon.spiap.api.OutOfService;
 import io.toolisticon.spiap.api.Service;
 import io.toolisticon.spiap.api.Services;

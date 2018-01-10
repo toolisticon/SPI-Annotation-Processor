@@ -76,7 +76,7 @@
         <project.build.resourceEncoding>UTF-8</project.build.resourceEncoding>
         <encoding>UTF-8</encoding>
 
-        <annotationProcessorToolkit.version>0.6.3</annotationProcessorToolkit.version>
+        <annotationProcessorToolkit.version>0.7.0</annotationProcessorToolkit.version>
 
         <!-- versions of test dependencies -->
         <junit.version>4.12</junit.version>
@@ -127,7 +127,7 @@
                                     </excludes>
                                     <includes>
                                         <include>io.toolisticon.spiap:*</include>
-                                        <include>de.holisticon.annotationprocessortoolkit:*</include>
+                                        <include>io.toolisticon.annotationprocessortoolkit:*</include>
                                         <include>*:*:*:*:test:*</include>
                                         <include>*:*:*:*:provided:*</include>
                                     </includes>
@@ -438,13 +438,13 @@
             </dependency>
 
             <dependency>
-                <groupId>de.holisticon.annotationprocessortoolkit</groupId>
+                <groupId>io.toolisticon.annotationprocessortoolkit</groupId>
                 <artifactId>annotationprocessor</artifactId>
                 <version>${annotationProcessorToolkit.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>de.holisticon.annotationprocessortoolkit</groupId>
+                <groupId>io.toolisticon.annotationprocessortoolkit</groupId>
                 <artifactId>testhelper</artifactId>
                 <version>${annotationProcessorToolkit.version}</version>
                 <scope>test</scope>
