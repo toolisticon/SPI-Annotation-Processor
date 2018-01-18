@@ -32,15 +32,15 @@ public class SpiProcessor extends AbstractAnnotationProcessor {
     }
 
     @Override
-    public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+    public boolean processAnnotations(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
 
-        handeSpiAnnotation(annotations, roundEnv);
+        handleSpiAnnotation(annotations, roundEnv);
         handeSpiServiceLocatorAnnotation(annotations, roundEnv);
 
         return false;
     }
 
-    private void handeSpiAnnotation(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+    private void handleSpiAnnotation(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         // handle Spi annotation
         for (Element element : roundEnv.getElementsAnnotatedWith(Spi.class)) {
 

@@ -69,10 +69,10 @@ public class ServiceProcessor extends AbstractAnnotationProcessor {
     }
 
     @Override
-    public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+    public boolean processAnnotations(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
 
         if (!roundEnv.processingOver()) {
-            processAnnotations(annotations, roundEnv);
+            processAnnotationsInternally(annotations, roundEnv);
         } else {
             writeConfigurationFiles();
         }
@@ -81,7 +81,7 @@ public class ServiceProcessor extends AbstractAnnotationProcessor {
 
     }
 
-    private void processAnnotations(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+    private void processAnnotationsInternally(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
 
         // process Services annotation
         for (Element element : roundEnv.getElementsAnnotatedWith(Services.class)) {
