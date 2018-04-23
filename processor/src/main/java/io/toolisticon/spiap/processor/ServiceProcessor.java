@@ -1,10 +1,12 @@
 package io.toolisticon.spiap.processor;
 
 import io.toolisticon.annotationprocessortoolkit.AbstractAnnotationProcessor;
+import io.toolisticon.annotationprocessortoolkit.ToolingProvider;
 import io.toolisticon.annotationprocessortoolkit.generators.SimpleResourceWriter;
 import io.toolisticon.annotationprocessortoolkit.tools.AnnotationUtils;
 import io.toolisticon.annotationprocessortoolkit.tools.AnnotationValueUtils;
 import io.toolisticon.annotationprocessortoolkit.tools.ElementUtils;
+import io.toolisticon.annotationprocessortoolkit.tools.TypeUtils;
 import io.toolisticon.spiap.api.OutOfService;
 import io.toolisticon.spiap.api.Service;
 import io.toolisticon.spiap.api.Services;
@@ -161,8 +163,8 @@ public class ServiceProcessor extends AbstractAnnotationProcessor {
             for (String fqTypeName : spiInterfaces) {
 
 
-                TypeMirror typeMirror = getTypeUtils().doTypeRetrieval().getTypeMirror(fqTypeName);
-                TypeElement typeMirrorTypeElement = (TypeElement) getTypeUtils().getTypes().asElement(typeMirror);
+                TypeMirror typeMirror = TypeUtils.TypeRetrieval.getTypeMirror(fqTypeName);
+                TypeElement typeMirrorTypeElement = (TypeElement) ToolingProvider.getTooling().getTypes().asElement(typeMirror);
 
                 //check if type is interface
                 if (!ElementUtils.CheckKindOfElement.isInterface(typeMirrorTypeElement)) {
@@ -172,7 +174,7 @@ public class ServiceProcessor extends AbstractAnnotationProcessor {
 
 
                 // check if annotatedElement is assignable to spi interface == implements the spi interface
-                if (!getTypeUtils().doTypeComparison().isAssignableTo(typeElement, typeMirror)) {
+                if (!TypeUtils.TypeComparison.isAssignableTo(typeElement, typeMirror)) {
 
                     getMessager().error(annotatedElement, ServiceProcessorMessages.ERROR_ANNOTATED_CLASS_MUST_IMPLEMENT_CONFIGURED_INTERFACES.getMessage(), typeMirrorTypeElement.getQualifiedName().toString());
                     break;

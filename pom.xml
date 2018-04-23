@@ -76,7 +76,7 @@
         <project.build.resourceEncoding>UTF-8</project.build.resourceEncoding>
         <encoding>UTF-8</encoding>
 
-        <annotationProcessorToolkit.version>0.8.0</annotationProcessorToolkit.version>
+        <annotationProcessorToolkit.version>0.9.0</annotationProcessorToolkit.version>
 
         <!-- versions of test dependencies -->
         <junit.version>4.12</junit.version>

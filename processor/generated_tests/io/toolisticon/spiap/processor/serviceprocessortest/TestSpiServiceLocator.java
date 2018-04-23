@@ -2,6 +2,8 @@ package io.toolisticon.spiap.processor.serviceprocessortest;
 
 import io.toolisticon.spiap.processor.serviceprocessortest.TestSpi;
 import io.toolisticon.spiap.api.Service;
+import io.toolisticon.spiap.api.Services;
+import io.toolisticon.spiap.api.OutOfService;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,7 +42,17 @@ public class TestSpiServiceLocator {
         private ServiceKey(TestSpi serviceImpl) {
 
             Service serviceAnnotation = serviceImpl.getClass().getAnnotation(Service.class);
-
+            if (serviceAnnotation == null) {
+                Services servicesAnnotation = serviceImpl.getClass().getAnnotation(Services.class);
+                if (servicesAnnotation != null) {
+                    for (Service service : servicesAnnotation.value()) {
+                        if (TestSpi.class.equals(service.value())) {
+                            serviceAnnotation = service;
+                            break;
+                        }
+                    }
+                }
+            }
             id = serviceAnnotation != null && !serviceAnnotation.id().equals("") ? serviceAnnotation.id() : serviceImpl.getClass().getCanonicalName();
             description = serviceAnnotation != null && !serviceAnnotation.description().equals("") ? serviceAnnotation.description() : "";
             priority = serviceAnnotation != null ? serviceAnnotation.priority() : 0;
@@ -181,7 +193,11 @@ public class TestSpiServiceLocator {
 
         while (iterator.hasNext()) {
             try {
-                services.add(iterator.next());
+
+                TestSpi service = iterator.next();
+                if (service.getClass().getAnnotation(OutOfService.class) == null){
+                    services.add(service);
+                }
             }
             catch (Error e) {
                 e.printStackTrace(System.err);

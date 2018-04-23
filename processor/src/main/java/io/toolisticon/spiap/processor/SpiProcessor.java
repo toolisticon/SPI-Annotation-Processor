@@ -1,6 +1,7 @@
 package io.toolisticon.spiap.processor;
 
 import io.toolisticon.annotationprocessortoolkit.AbstractAnnotationProcessor;
+import io.toolisticon.annotationprocessortoolkit.ToolingProvider;
 import io.toolisticon.annotationprocessortoolkit.generators.SimpleJavaWriter;
 import io.toolisticon.annotationprocessortoolkit.tools.AnnotationUtils;
 import io.toolisticon.annotationprocessortoolkit.tools.ElementUtils;
@@ -81,7 +82,7 @@ public class SpiProcessor extends AbstractAnnotationProcessor {
                 continue;
             }
 
-            Element serviceLocatorInterfaceElement = getTypeUtils().getTypes().asElement(typeMirror);
+            Element serviceLocatorInterfaceElement = ToolingProvider.getTooling().getTypes().asElement(typeMirror);
 
             // check if it is place on interface
             if (!ElementUtils.CheckKindOfElement.isInterface(serviceLocatorInterfaceElement)) {
