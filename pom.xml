@@ -3,7 +3,7 @@
 
     <groupId>io.toolisticon.spiap</groupId>
     <artifactId>spiap-parent</artifactId>
-    <version>0.6.1-SNAPSHOT</version>
+    <version>0.5.1</version>
     <packaging>pom</packaging>
 
     <name>spiap-parent</name>
@@ -68,7 +68,7 @@
         <connection>scm:git:git@github.com:toolisticon/SPI-Annotation-Processor.git</connection>
         <developerConnection>scm:git:git@github.com:toolisticon/SPI-Annotation-Processor.git</developerConnection>
         <url>git@github.com:toolisticon/SPI-Annotation-Processor.git</url>
-        <tag>HEAD</tag>
+        <tag>spiap-parent-0.5.1</tag>
     </scm>
 
     <properties>
