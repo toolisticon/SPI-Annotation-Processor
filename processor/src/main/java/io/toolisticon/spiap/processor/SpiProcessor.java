@@ -1,10 +1,12 @@
 package io.toolisticon.spiap.processor;
 
 import io.toolisticon.annotationprocessortoolkit.AbstractAnnotationProcessor;
-import io.toolisticon.annotationprocessortoolkit.ToolingProvider;
-import io.toolisticon.annotationprocessortoolkit.generators.SimpleJavaWriter;
 import io.toolisticon.annotationprocessortoolkit.tools.AnnotationUtils;
 import io.toolisticon.annotationprocessortoolkit.tools.ElementUtils;
+import io.toolisticon.annotationprocessortoolkit.tools.FilerUtils;
+import io.toolisticon.annotationprocessortoolkit.tools.MessagerUtils;
+import io.toolisticon.annotationprocessortoolkit.tools.ProcessingEnvironmentUtils;
+import io.toolisticon.annotationprocessortoolkit.tools.generators.SimpleJavaWriter;
 import io.toolisticon.spiap.api.Spi;
 import io.toolisticon.spiap.api.SpiServiceLocator;
 
@@ -35,22 +37,22 @@ public class SpiProcessor extends AbstractAnnotationProcessor {
     @Override
     public boolean processAnnotations(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
 
-        handleSpiAnnotation(annotations, roundEnv);
-        handeSpiServiceLocatorAnnotation(annotations, roundEnv);
+        handleSpiAnnotation(roundEnv);
+        handeSpiServiceLocatorAnnotation(roundEnv);
 
         return false;
     }
 
-    private void handleSpiAnnotation(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+    private void handleSpiAnnotation(RoundEnvironment roundEnv) {
         // handle Spi annotation
         for (Element element : roundEnv.getElementsAnnotatedWith(Spi.class)) {
 
-            getMessager().info(element, "Process : " + element.getSimpleName() + " annotated with Spi annotation");
+            MessagerUtils.info(element, "Process : " + element.getSimpleName() + " annotated with Spi annotation");
 
 
             // check if it is place on interface
             if (!ElementUtils.CheckKindOfElement.isInterface(element)) {
-                getMessager().error(element, SpiProcessorMessages.ERROR_SPI_ANNOTATION_MUST_BE_PLACED_ON_INTERFACE.getMessage());
+                MessagerUtils.error(element, SpiProcessorMessages.ERROR_SPI_ANNOTATION_MUST_BE_PLACED_ON_INTERFACE.getMessage());
                 continue;
             }
 
@@ -67,26 +69,26 @@ public class SpiProcessor extends AbstractAnnotationProcessor {
 
     }
 
-    private void handeSpiServiceLocatorAnnotation(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+    private void handeSpiServiceLocatorAnnotation(RoundEnvironment roundEnv) {
 
         // handle Spi annotation
         for (Element element : roundEnv.getElementsAnnotatedWith(SpiServiceLocator.class)) {
 
-            getMessager().info(element, "Process : " + element.getSimpleName() + " annotated with SpiServiceLocator annotation");
+            MessagerUtils.info(element, "Process : " + element.getSimpleName() + " annotated with SpiServiceLocator annotation");
 
 
             // get type from annotation
             TypeMirror typeMirror = AnnotationUtils.getClassAttributeFromAnnotationAsTypeMirror(element, SpiServiceLocator.class);
             if (typeMirror == null) {
-                getMessager().error(element, "Couldn't get type from annotations attributes");
+                MessagerUtils.error(element, "Couldn't get type from annotations attributes");
                 continue;
             }
 
-            Element serviceLocatorInterfaceElement = ToolingProvider.getTooling().getTypes().asElement(typeMirror);
+            Element serviceLocatorInterfaceElement = ProcessingEnvironmentUtils.getTypes().asElement(typeMirror);
 
             // check if it is place on interface
             if (!ElementUtils.CheckKindOfElement.isInterface(serviceLocatorInterfaceElement)) {
-                getMessager().error(element, SpiProcessorMessages.ERROR_SPI_ANNOTATION_MUST_BE_PLACED_ON_INTERFACE.getMessage());
+                MessagerUtils.error(element, SpiProcessorMessages.ERROR_SPI_ANNOTATION_MUST_BE_PLACED_ON_INTERFACE.getMessage());
                 continue;
             }
 
@@ -115,11 +117,11 @@ public class SpiProcessor extends AbstractAnnotationProcessor {
         String filePath = packageElement.getQualifiedName().toString() + "." + typeElement.getSimpleName().toString() + "ServiceLocator";
 
         try {
-            SimpleJavaWriter javaWriter = getFileObjectUtils().createSourceFile(filePath, annotatedElement);
+            SimpleJavaWriter javaWriter = FilerUtils.createSourceFile(filePath, annotatedElement);
             javaWriter.writeTemplate("/ServiceLocator.tpl", model);
             javaWriter.close();
         } catch (IOException e) {
-            getMessager().error(annotatedElement, SpiProcessorMessages.ERROR_COULD_NOT_CREATE_SERVICE_LOCATOR.getMessage(), filePath);
+            MessagerUtils.error(annotatedElement, SpiProcessorMessages.ERROR_COULD_NOT_CREATE_SERVICE_LOCATOR.getMessage(), filePath);
         }
 
     }

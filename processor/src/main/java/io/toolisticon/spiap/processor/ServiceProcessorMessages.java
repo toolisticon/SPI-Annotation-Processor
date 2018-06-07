@@ -37,7 +37,7 @@ public enum ServiceProcessorMessages {
      * @param code    the message code
      * @param message the message text
      */
-    private ServiceProcessorMessages(String code, String message) {
+    ServiceProcessorMessages(String code, String message) {
         this.code = code;
         this.message = message;
     }

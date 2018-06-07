@@ -1,12 +1,14 @@
 package io.toolisticon.spiap.processor;
 
 import io.toolisticon.annotationprocessortoolkit.AbstractAnnotationProcessor;
-import io.toolisticon.annotationprocessortoolkit.ToolingProvider;
-import io.toolisticon.annotationprocessortoolkit.generators.SimpleResourceWriter;
 import io.toolisticon.annotationprocessortoolkit.tools.AnnotationUtils;
 import io.toolisticon.annotationprocessortoolkit.tools.AnnotationValueUtils;
 import io.toolisticon.annotationprocessortoolkit.tools.ElementUtils;
+import io.toolisticon.annotationprocessortoolkit.tools.FilerUtils;
+import io.toolisticon.annotationprocessortoolkit.tools.MessagerUtils;
+import io.toolisticon.annotationprocessortoolkit.tools.ProcessingEnvironmentUtils;
 import io.toolisticon.annotationprocessortoolkit.tools.TypeUtils;
+import io.toolisticon.annotationprocessortoolkit.tools.generators.SimpleResourceWriter;
 import io.toolisticon.spiap.api.OutOfService;
 import io.toolisticon.spiap.api.Service;
 import io.toolisticon.spiap.api.Services;
@@ -17,12 +19,8 @@ import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
-import javax.tools.FileObject;
 import javax.tools.StandardLocation;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -93,19 +91,17 @@ public class ServiceProcessor extends AbstractAnnotationProcessor {
                 continue;
             }
 
-            Service[] services = element.getAnnotation(Services.class).value();
+            // get annotation mirror of Services annotation
             AnnotationMirror servicesAnnotationMirror = AnnotationUtils.getAnnotationMirror(element, Services.class);
 
-            for (Service service : services) {
+            // get Service AnnotationMirrors of Services annotation
+            AnnotationValue annotationValue = AnnotationUtils.getAnnotationValueOfAttribute(servicesAnnotationMirror);
+            AnnotationMirror[] serviceAnnotationMirrors = AnnotationValueUtils.getAnnotationValueArray(annotationValue);
 
-                AnnotationValue annotationValue = AnnotationUtils.getAnnotationValueOfAttribute(servicesAnnotationMirror);
-                AnnotationMirror[] serviceAnnotationMirrors = AnnotationValueUtils.getAnnotationValueArray(annotationValue);
-
-                //getMessager().error(element, "GOT ENCAPSULATED SERVICE MIRROR : " + annotationValue.toString());
-                for (AnnotationMirror serviceAnnotationMirror : serviceAnnotationMirrors) {
-                    processAnnotation(serviceAnnotationMirror, element);
-                }
+            for (AnnotationMirror serviceAnnotationMirror : serviceAnnotationMirrors) {
+                processAnnotation(serviceAnnotationMirror, element);
             }
+
 
         }
 
@@ -131,7 +127,7 @@ public class ServiceProcessor extends AbstractAnnotationProcessor {
         // Check for OutOfService annotation
         if (element.getAnnotation(OutOfService.class) != null) {
             // skip processing of element
-            getMessager().info(element, ServiceProcessorMessages.INFO_SKIP_ELEMENT_ANNOTATED_AS_OUT_OF_SERVICE.getMessage(), ElementUtils.CastElement.castClass(element).getQualifiedName());
+            MessagerUtils.info(element, ServiceProcessorMessages.INFO_SKIP_ELEMENT_ANNOTATED_AS_OUT_OF_SERVICE.getMessage(), ElementUtils.CastElement.castClass(element).getQualifiedName());
             return true;
         }
         return false;
@@ -141,7 +137,7 @@ public class ServiceProcessor extends AbstractAnnotationProcessor {
 
         // check if it is placed on Class
         if (!ElementUtils.CheckKindOfElement.isClass(annotatedElement)) {
-            getMessager().error(annotatedElement, ServiceProcessorMessages.ERROR_SPI_ANNOTATION_MUST_BE_PLACED_ON_CLASS.getMessage());
+            MessagerUtils.error(annotatedElement, ServiceProcessorMessages.ERROR_SPI_ANNOTATION_MUST_BE_PLACED_ON_CLASS.getMessage());
             return;
 
         }
@@ -164,19 +160,18 @@ public class ServiceProcessor extends AbstractAnnotationProcessor {
 
 
                 TypeMirror typeMirror = TypeUtils.TypeRetrieval.getTypeMirror(fqTypeName);
-                TypeElement typeMirrorTypeElement = (TypeElement) ToolingProvider.getTooling().getTypes().asElement(typeMirror);
+                TypeElement typeMirrorTypeElement = (TypeElement) ProcessingEnvironmentUtils.getTypes().asElement(typeMirror);
 
                 //check if type is interface
                 if (!ElementUtils.CheckKindOfElement.isInterface(typeMirrorTypeElement)) {
-                    getMessager().error(annotatedElement, ServiceProcessorMessages.ERROR_VALUE_ATTRIBUTE_MUST_ONLY_CONTAIN_INTERFACES.getMessage(), typeMirrorTypeElement.getQualifiedName().toString());
+                    MessagerUtils.error(annotatedElement, ServiceProcessorMessages.ERROR_VALUE_ATTRIBUTE_MUST_ONLY_CONTAIN_INTERFACES.getMessage(), typeMirrorTypeElement.getQualifiedName().toString());
                     break;
                 }
-
 
                 // check if annotatedElement is assignable to spi interface == implements the spi interface
                 if (!TypeUtils.TypeComparison.isAssignableTo(typeElement, typeMirror)) {
 
-                    getMessager().error(annotatedElement, ServiceProcessorMessages.ERROR_ANNOTATED_CLASS_MUST_IMPLEMENT_CONFIGURED_INTERFACES.getMessage(), typeMirrorTypeElement.getQualifiedName().toString());
+                    MessagerUtils.error(annotatedElement, ServiceProcessorMessages.ERROR_ANNOTATED_CLASS_MUST_IMPLEMENT_CONFIGURED_INTERFACES.getMessage(), typeMirrorTypeElement.getQualifiedName().toString());
                     break;
 
                 }
@@ -203,7 +198,7 @@ public class ServiceProcessor extends AbstractAnnotationProcessor {
 
             // check if we have found new services
             if (existingServiceImplementations.containsAll(entry.getValue())) {
-                getMessager().info(null, "All services implementations were already registered for ${0}", entry.getKey());
+                MessagerUtils.info(null, "All services implementations were already registered for ${0}", entry.getKey());
                 return;
             }
 
@@ -212,6 +207,17 @@ public class ServiceProcessor extends AbstractAnnotationProcessor {
 
             try {
 
+                // write service provider file by using a template
+                SimpleResourceWriter writer = FilerUtils.createResource(StandardLocation.SOURCE_OUTPUT, "", serviceProviderFile);
+
+                Map<String, Object> model = new HashMap<String, Object>();
+                model.put("fqns", allServiceImplementations);
+
+                writer.writeTemplateString("!{for fqn: fqns}${fqn}\n!{/for}", model);
+                writer.close();
+
+                /*-
+                // Alternative approach by using the Filer utility class
                 BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(getFiler().createResource(StandardLocation.SOURCE_OUTPUT, "", serviceProviderFile).openOutputStream()));
 
                 for (String value : allServiceImplementations) {
@@ -221,10 +227,12 @@ public class ServiceProcessor extends AbstractAnnotationProcessor {
                 bw.flush();
 
                 bw.close();
-                getMessager().info(null, "Written service provider registration file for ${0} containing ${1}", serviceProviderFile, allServiceImplementations);
+                */
+
+                MessagerUtils.info(null, "Written service provider registration file for ${0} containing ${1}", serviceProviderFile, allServiceImplementations);
 
             } catch (IOException e) {
-                getMessager().error(null, "Wasn't able to write service provider registration file for ${0}", entry.getKey());
+                MessagerUtils.error(null, "Wasn't able to write service provider registration file for ${0}", entry.getKey());
                 return;
             }
 
@@ -233,30 +241,27 @@ public class ServiceProcessor extends AbstractAnnotationProcessor {
 
     }
 
+    /**
+     * Read service file.
+     * Get all already defined service providers.
+     *
+     * @param serviceProviderFile the service provider file
+     * @return a set containing all service providers
+     */
     protected Set<String> readServiceFile(String serviceProviderFile) {
 
-        getMessager().info(null, "Reading existing service file : ${0}", serviceProviderFile);
+        MessagerUtils.info(null, "Reading existing service file : ${0}", serviceProviderFile);
 
         Set<String> resultSet = new HashSet<String>();
 
         try {
 
-            FileObject existingFile = getFiler().getResource(StandardLocation.SOURCE_OUTPUT, "",
-                    serviceProviderFile);
+            resultSet.addAll(FilerUtils.getResource(StandardLocation.SOURCE_OUTPUT, "",
+                    serviceProviderFile).readAsLines(true));
 
-            BufferedReader br = new BufferedReader(existingFile.openReader(true));
-
-            String currentLine = br.readLine();
-            while (currentLine != null) {
-
-                resultSet.add(currentLine.trim());
-
-                // read next line
-                currentLine = br.readLine();
-            }
 
         } catch (IOException e) {
-            getMessager().info(null, "Wasn't able to open existing service file for ${0}", serviceProviderFile);
+            MessagerUtils.info(null, "Wasn't able to open existing service file for ${0}", serviceProviderFile);
         }
 
         return resultSet;
