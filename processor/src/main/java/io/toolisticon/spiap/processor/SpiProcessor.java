@@ -52,7 +52,7 @@ public class SpiProcessor extends AbstractAnnotationProcessor {
 
             // check if it is place on interface
             if (!ElementUtils.CheckKindOfElement.isInterface(element)) {
-                MessagerUtils.error(element, SpiProcessorMessages.ERROR_SPI_ANNOTATION_MUST_BE_PLACED_ON_INTERFACE.getMessage());
+                MessagerUtils.error(element, SpiProcessorMessages.ERROR_SPI_ANNOTATION_MUST_BE_PLACED_ON_INTERFACE);
                 continue;
             }
 
@@ -88,7 +88,7 @@ public class SpiProcessor extends AbstractAnnotationProcessor {
 
             // check if it is place on interface
             if (!ElementUtils.CheckKindOfElement.isInterface(serviceLocatorInterfaceElement)) {
-                MessagerUtils.error(element, SpiProcessorMessages.ERROR_SPI_ANNOTATION_MUST_BE_PLACED_ON_INTERFACE.getMessage());
+                MessagerUtils.error(element, SpiProcessorMessages.ERROR_SERVICE_LOCATOR_PASSED_SPI_CLASS_MUST_BE_AN_INTERFACE);
                 continue;
             }
 
@@ -121,7 +121,7 @@ public class SpiProcessor extends AbstractAnnotationProcessor {
             javaWriter.writeTemplate("/ServiceLocator.tpl", model);
             javaWriter.close();
         } catch (IOException e) {
-            MessagerUtils.error(annotatedElement, SpiProcessorMessages.ERROR_COULD_NOT_CREATE_SERVICE_LOCATOR.getMessage(), filePath);
+            MessagerUtils.error(annotatedElement, SpiProcessorMessages.ERROR_COULD_NOT_CREATE_SERVICE_LOCATOR, filePath);
         }
 
     }

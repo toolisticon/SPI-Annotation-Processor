@@ -27,13 +27,8 @@
 
 
         <dependency>
-            <groupId>com.google.testing.compile</groupId>
-            <artifactId>compile-testing</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>io.toolisticon.annotationprocessortoolkit</groupId>
-            <artifactId>testhelper</artifactId>
+            <groupId>io.toolisticon.compiletesting</groupId>
+            <artifactId>compiletesting</artifactId>
         </dependency>
 
 
@@ -128,7 +123,11 @@
 
         </plugins>
 
+
+
+
     </build>
+
 
 
 </project>
