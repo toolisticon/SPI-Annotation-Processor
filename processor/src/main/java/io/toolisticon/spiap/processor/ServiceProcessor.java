@@ -33,10 +33,9 @@ public class ServiceProcessor extends AbstractAnnotationProcessor {
 
     private final static Set<String> SUPPORTED_ANNOTATIONS = createSupportedAnnotationSet(Services.class, Service.class);
 
-    private final static Map<String, SimpleResourceWriter> spiResourceFilePool = new HashMap<String, SimpleResourceWriter>();
+    private final Map<String, SimpleResourceWriter> spiResourceFilePool = new HashMap<String, SimpleResourceWriter>();
 
-    private final static ServiceImplMap serviceImplHashMap = new ServiceImplMap();
-
+    private final ServiceImplMap serviceImplHashMap = new ServiceImplMap();
 
     /**
      * Map to store service provider implementations.
@@ -127,7 +126,7 @@ public class ServiceProcessor extends AbstractAnnotationProcessor {
         // Check for OutOfService annotation
         if (element.getAnnotation(OutOfService.class) != null) {
             // skip processing of element
-            MessagerUtils.info(element, ServiceProcessorMessages.INFO_SKIP_ELEMENT_ANNOTATED_AS_OUT_OF_SERVICE.getMessage(), ElementUtils.CastElement.castClass(element).getQualifiedName());
+            MessagerUtils.info(element, ServiceProcessorMessages.INFO_SKIP_ELEMENT_ANNOTATED_AS_OUT_OF_SERVICE, ElementUtils.CastElement.castClass(element).getQualifiedName());
             return true;
         }
         return false;
@@ -137,7 +136,7 @@ public class ServiceProcessor extends AbstractAnnotationProcessor {
 
         // check if it is placed on Class
         if (!ElementUtils.CheckKindOfElement.isClass(annotatedElement)) {
-            MessagerUtils.error(annotatedElement, ServiceProcessorMessages.ERROR_SPI_ANNOTATION_MUST_BE_PLACED_ON_CLASS.getMessage());
+            MessagerUtils.error(annotatedElement, ServiceProcessorMessages.ERROR_SPI_ANNOTATION_MUST_BE_PLACED_ON_CLASS);
             return;
 
         }
@@ -164,14 +163,14 @@ public class ServiceProcessor extends AbstractAnnotationProcessor {
 
                 //check if type is interface
                 if (!ElementUtils.CheckKindOfElement.isInterface(typeMirrorTypeElement)) {
-                    MessagerUtils.error(annotatedElement, ServiceProcessorMessages.ERROR_VALUE_ATTRIBUTE_MUST_ONLY_CONTAIN_INTERFACES.getMessage(), typeMirrorTypeElement.getQualifiedName().toString());
+                    MessagerUtils.error(annotatedElement, ServiceProcessorMessages.ERROR_VALUE_ATTRIBUTE_MUST_ONLY_CONTAIN_INTERFACES, typeMirrorTypeElement.getQualifiedName().toString());
                     break;
                 }
 
                 // check if annotatedElement is assignable to spi interface == implements the spi interface
                 if (!TypeUtils.TypeComparison.isAssignableTo(typeElement, typeMirror)) {
 
-                    MessagerUtils.error(annotatedElement, ServiceProcessorMessages.ERROR_ANNOTATED_CLASS_MUST_IMPLEMENT_CONFIGURED_INTERFACES.getMessage(), typeMirrorTypeElement.getQualifiedName().toString());
+                    MessagerUtils.error(annotatedElement, ServiceProcessorMessages.ERROR_ANNOTATED_CLASS_MUST_IMPLEMENT_CONFIGURED_INTERFACES, typeMirrorTypeElement.getQualifiedName().toString());
                     break;
 
                 }
@@ -184,8 +183,7 @@ public class ServiceProcessor extends AbstractAnnotationProcessor {
 
         }
     }
-
-
+    
     private void writeConfigurationFiles() {
 
         // Iterate through services that were detected by the annotation processor

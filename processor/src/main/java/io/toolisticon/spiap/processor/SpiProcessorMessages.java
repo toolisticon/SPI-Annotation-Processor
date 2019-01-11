@@ -1,14 +1,17 @@
 package io.toolisticon.spiap.processor;
 
 
+import io.toolisticon.annotationprocessortoolkit.tools.corematcher.ValidationMessage;
+
 /**
  * SpiProcessorMessages used by annotation processors of Advice annotations.
  */
-public enum SpiProcessorMessages {
+public enum SpiProcessorMessages implements ValidationMessage {
 
 
     ERROR_SPI_ANNOTATION_MUST_BE_PLACED_ON_INTERFACE("SPI_ERROR_001", "Spi annotation must only be used on interfaces"),
-    ERROR_COULD_NOT_CREATE_SERVICE_LOCATOR("SPI_ERROR_002", "Couldn't create Spi Service Locator : ${0}"),;
+    ERROR_COULD_NOT_CREATE_SERVICE_LOCATOR("SPI_ERROR_002", "Couldn't create Spi Service Locator : ${0}"),
+    ERROR_SERVICE_LOCATOR_PASSED_SPI_CLASS_MUST_BE_AN_INTERFACE("SPI_ERROR_003", "Passed spi class in service locator annotation isn't an interface"),;
 
 
     /**
@@ -51,17 +54,8 @@ public enum SpiProcessorMessages {
      * @return the message text
      */
     public String getMessage() {
-        return (printMessageCodes ? "[" + code + "] : " : "") + message;
+        return message;
     }
 
-
-    /**
-     * Allows toggling if message codes should be printed.
-     *
-     * @param printMessageCodes defines if message codes should be part of the message text
-     */
-    public static void setPrintMessageCodes(boolean printMessageCodes) {
-        SpiProcessorMessages.printMessageCodes = printMessageCodes;
-    }
 
 }

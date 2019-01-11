@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>io.toolisticon.spiap</groupId>
@@ -22,10 +23,9 @@
     </modules>
 
     <parent>
-        <groupId>org.sonatype.oss</groupId>
-        <artifactId>oss-parent</artifactId>
-        <version>9</version>
-
+        <groupId>io.toolisticon.maven</groupId>
+        <artifactId>maven-oss-parent</artifactId>
+        <version>0.7.0</version>
     </parent>
 
     <organization>
@@ -76,14 +76,32 @@
         <project.build.resourceEncoding>UTF-8</project.build.resourceEncoding>
         <encoding>UTF-8</encoding>
 
-        <annotationProcessorToolkit.version>0.10.1</annotationProcessorToolkit.version>
+        <java.version>1.6</java.version>
+
+        <java.compile.source.version>1.6</java.compile.source.version>
+        <java.compile.target.version>1.6</java.compile.target.version>
+
+
+        <compile-testing.version>0.2.0</compile-testing.version>
+        <annotationProcessorToolkit.version>0.12.0</annotationProcessorToolkit.version>
 
         <!-- versions of test dependencies -->
         <junit.version>4.12</junit.version>
         <hamcrest.version>1.3</hamcrest.version>
         <mockito.version>1.10.19</mockito.version>
         <lombok.version>1.16.6</lombok.version>
-        <google-compile-testing.version>0.9</google-compile-testing.version>
+
+
+        <!-- plugin versions -->
+        <animal-sniffer-maven-plugin.version>1.16</animal-sniffer-maven-plugin.version>
+        <maven-assembly-plugin.version>2.4</maven-assembly-plugin.version>
+        <maven-bundle-plugin.version>2.5.3</maven-bundle-plugin.version>
+        <maven-failsafe-plugin.version>2.18.1</maven-failsafe-plugin.version>
+        <maven-processor-plugin.version>2.2.4</maven-processor-plugin.version>
+        <maven-surefire-plugin.version>2.18.1</maven-surefire-plugin.version>
+
+        <maven-javadoc-plugin.version>2.10.4</maven-javadoc-plugin.version>
+
 
     </properties>
 
@@ -92,17 +110,22 @@
         <defaultGoal>clean install</defaultGoal>
         <plugins>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>cobertura-maven-plugin</artifactId>
-                <configuration>
-                    <instrumentation>
-                        <ignoreTrivial>true</ignoreTrivial>
-                    </instrumentation>
-                    <format>xml</format>
-                    <maxmem>256m</maxmem>
-                    <!-- aggregated reports for multi-module projects -->
-                    <aggregate>true</aggregate>
-                </configuration>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <artifactId>maven-enforcer-plugin</artifactId>
@@ -141,7 +164,7 @@
             <plugin>
                 <groupId>org.eluder.coveralls</groupId>
                 <artifactId>coveralls-maven-plugin</artifactId>
-                <version>3.0.1</version>
+                <version>4.3.0</version>
                 <configuration>
                     <repoToken>${COVERALL_TOKEN}</repoToken>
                 </configuration>
@@ -166,8 +189,8 @@
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
+                    <source>${java.compile.source.version}</source>
+                    <target>${java.compile.target.version}</target>
                 </configuration>
             </plugin>
 
@@ -175,89 +198,16 @@
         </plugins>
         <pluginManagement>
             <plugins>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>cobertura-maven-plugin</artifactId>
-                    <version>2.6</version>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-clean-plugin</artifactId>
-                    <version>2.6.1</version>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-resources-plugin</artifactId>
-                    <version>2.7</version>
-                </plugin>
+
+
                 <plugin>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.6.0</version>
                     <configuration>
-                        <source>1.6</source>
-                        <target>1.6</target>
+                        <source>${java.compile.source.version}</source>
+                        <target>${java.compile.target.version}</target>
+                    </configuration>
+                </plugin>
 
-                        <!-- <compilerArgument>-proc:none</compilerArgument> -->
-                        <!--
-                        <annotationProcessorPaths>
-                            <path>
-                                <artifactId>byte-buddy-annotation-processor</artifactId>
-                                  <groupId>net.bytebuddy</groupId>
-                                <version>1.5.3-SNAPSHOT</version>
-                            </path>
-                        </annotationProcessorPaths>
-                        -->
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-dependency-plugin</artifactId>
-                    <version>2.9</version>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-jar-plugin</artifactId>
-                    <version>2.5</version>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-war-plugin</artifactId>
-                    <version>2.4</version>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.18.1</version>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-failsafe-plugin</artifactId>
-                    <version>2.18.1</version>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-install-plugin</artifactId>
-                    <version>2.5.2</version>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-deploy-plugin</artifactId>
-                    <version>2.8.2</version>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-release-plugin</artifactId>
-                    <version>2.5</version>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>2.10.4</version>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-site-plugin</artifactId>
-                    <version>3.4</version>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-enforcer-plugin</artifactId>
-                    <version>1.3.1</version>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-project-info-reports-plugin</artifactId>
-                    <version>2.7</version>
-                    <configuration>
-                        <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
-                    </configuration>
-                </plugin>
                 <plugin>
                     <groupId>org.apache.felix</groupId>
                     <artifactId>maven-bundle-plugin</artifactId>
@@ -267,31 +217,44 @@
                             <Export-Package>io.toolisticon.spiap</Export-Package>
                         </instructions>
                     </configuration>
-                    <version>2.5.3</version>
+                    <version>${maven-bundle-plugin.version}</version>
                 </plugin>
+
                 <plugin>
-                    <artifactId>maven-ejb-plugin</artifactId>
-                    <version>2.5</version>
+                    <artifactId>maven-project-info-reports-plugin</artifactId>
+                    <configuration>
+                        <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
+                    </configuration>
                 </plugin>
+
+
                 <plugin>
-                    <artifactId>maven-ear-plugin</artifactId>
-                    <version>2.10</version>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>0.8.2</version>
                 </plugin>
+
                 <plugin>
-                    <groupId>org.mortbay.jetty</groupId>
-                    <artifactId>jetty-maven-plugin</artifactId>
-                    <version>8.1.15.v20140411</version>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>${maven-failsafe-plugin.version}</version>
                 </plugin>
+
+                <plugin>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven-surefire-plugin.version}</version>
+                </plugin>
+
                 <plugin>
                     <groupId>org.bsc.maven</groupId>
                     <artifactId>maven-processor-plugin</artifactId>
-                    <version>2.2.4</version>
+                    <version>${maven-processor-plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>2.4</version>
+                    <version>${maven-assembly-plugin.version}</version>
                 </plugin>
+
 
             </plugins>
         </pluginManagement>
@@ -426,6 +389,14 @@
 
             <!-- internal -->
             <dependency>
+                <groupId>io.toolisticon.compiletesting</groupId>
+                <artifactId>compiletesting</artifactId>
+                <version>${compile-testing.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+
+            <dependency>
                 <groupId>io.toolisticon.spiap</groupId>
                 <artifactId>spiap-api</artifactId>
                 <version>${project.version}</version>
@@ -443,19 +414,6 @@
                 <version>${annotationProcessorToolkit.version}</version>
             </dependency>
 
-            <dependency>
-                <groupId>io.toolisticon.annotationprocessortoolkit</groupId>
-                <artifactId>testhelper</artifactId>
-                <version>${annotationProcessorToolkit.version}</version>
-                <scope>test</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>com.google.testing.compile</groupId>
-                <artifactId>compile-testing</artifactId>
-                <version>${google-compile-testing.version}</version>
-                <scope>test</scope>
-            </dependency>
 
         </dependencies>
     </dependencyManagement>
