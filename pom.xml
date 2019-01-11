@@ -214,7 +214,7 @@
                     <extensions>true</extensions>
                     <configuration>
                         <instructions>
-                            <Export-Package>io.toolisticon.compiletesting</Export-Package>
+                            <Export-Package>io.toolisticon.spiap</Export-Package>
                         </instructions>
                     </configuration>
                     <version>${maven-bundle-plugin.version}</version>
