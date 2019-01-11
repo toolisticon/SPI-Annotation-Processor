@@ -183,13 +183,7 @@ public class ServiceProcessor extends AbstractAnnotationProcessor {
 
         }
     }
-
-    private void writeServiceConfiguration(Element annotatedElement) {
-
-
-    }
-
-
+    
     private void writeConfigurationFiles() {
 
         // Iterate through services that were detected by the annotation processor
