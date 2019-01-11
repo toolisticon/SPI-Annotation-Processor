@@ -83,7 +83,7 @@
 
 
         <compile-testing.version>0.2.0</compile-testing.version>
-        <annotationProcessorToolkit.version>0.11.2-SNAPSHOT</annotationProcessorToolkit.version>
+        <annotationProcessorToolkit.version>0.12.0</annotationProcessorToolkit.version>
 
         <!-- versions of test dependencies -->
         <junit.version>4.12</junit.version>
