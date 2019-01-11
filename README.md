@@ -158,8 +158,7 @@ The likelihood of a pull request being used rises with the following properties:
 
 This project is sponsored and supported by [holisticon AG](http://www.holisticon.de/)
 
-![Holisticon AG](/holisticon-logo.png)
-
+![Holisticon AG](https://raw.githubusercontent.com/toolisticon/toolisticon.github.io/master/holisticon-logo.png)
 # License
 
 This project is released under the revised [BSD License](LICENSE).
