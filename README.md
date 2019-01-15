@@ -1,6 +1,6 @@
 # SPI-Annotation-Processor
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.toolisticon.spiap/spiap-parent/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.toolisticon.spiap/spiap-parent)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.toolisticon.spiap/spiap-processor/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.toolisticon.spiap/spiap-processor)
 [![Build Status](https://travis-ci.org/toolisticon/SPI-Annotation-Processor.svg?branch=master)](https://travis-ci.org/toolisticon/SPI-Annotation-Processor)
 [![codecov](https://codecov.io/gh/toolisticon/SPI-Annotation-Processor/branch/master/graph/badge.svg)](https://codecov.io/gh/toolisticon/SPI-Annotation-Processor)
 
