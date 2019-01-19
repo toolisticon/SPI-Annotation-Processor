@@ -5,6 +5,8 @@ import io.toolisticon.spiap.api.Service;
 import io.toolisticon.spiap.api.Services;
 import io.toolisticon.spiap.api.OutOfService;
 
+import java.io.InputStream;
+import java.lang.NoClassDefFoundError;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -12,12 +14,19 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.ServiceLoader;
 
 /**
  * A generic service locator.
  */
 public class ${ simpleName }ServiceLocator {
+
+    /**
+     * Caches all loaded services.
+     */
+    private static List<ServiceImplementation> serviceImplementations;
+
 
     /**
      * Exception that is thrown if a specific service implementation can't be found.
@@ -33,40 +42,20 @@ public class ${ simpleName }ServiceLocator {
     /**
      * Key class for looking checking available spi service implementations.
      */
-    public static class ServiceKey {
+    public static class ServiceImplementation {
 
         private final String id;
         private final String description;
         private final int priority;
+        private final boolean outOfService;
+        private final ${ simpleName } serviceInstance;
 
-        private ServiceKey(${ simpleName } serviceImpl) {
-
-            Service serviceAnnotation = serviceImpl.getClass().getAnnotation(Service.class);
-            if (serviceAnnotation == null) {
-                Services servicesAnnotation = serviceImpl.getClass().getAnnotation(Services.class);
-                if (servicesAnnotation != null) {
-                    for (Service service : servicesAnnotation.value()) {
-                        if (${ simpleName }.class.equals(service.value())) {
-                            serviceAnnotation = service;
-                            break;
-                        }
-                    }
-                }
-            }
-            id = serviceAnnotation != null && !serviceAnnotation.id().equals("") ? serviceAnnotation.id() : serviceImpl.getClass().getCanonicalName();
-            description = serviceAnnotation != null && !serviceAnnotation.description().equals("") ? serviceAnnotation.description() : "";
-            priority = serviceAnnotation != null ? serviceAnnotation.priority() : 0;
-
-        }
-
-        public ServiceKey(String id) {
-            this (id, "", null);
-        }
-
-        public ServiceKey(String id, String description, Integer priority) {
-            this.id = id;
-            this.description = description;
+        private ServiceImplementation(${ simpleName } serviceInstance, String id, String description, Integer priority, boolean outOfService) {
+            this.serviceInstance = serviceInstance;
+            this.id = id != null ? id : serviceInstance.getClass().getCanonicalName();
+            this.description = description != null ? description : "";
             this.priority = priority !=null ? priority : 0;
+            this.outOfService = outOfService;
         }
 
         public String getId() {
@@ -81,15 +70,103 @@ public class ${ simpleName }ServiceLocator {
             return priority;
         }
 
+        public boolean isOutOfService () {
+            return outOfService;
+        }
+
+        public ${ simpleName } getServiceInstance () {
+            return serviceInstance;
+        }
+
 
     }
+
+
+    private static ServiceImplementation getServiceImplementationByAnnotations(${ simpleName } serviceImpl) {
+
+        try {
+            Service serviceAnnotation = serviceImpl.getClass().getAnnotation(Service.class);
+            if (serviceAnnotation == null) {
+                Services servicesAnnotation = serviceImpl.getClass().getAnnotation(Services.class);
+                if (servicesAnnotation != null) {
+                    for (Service service : servicesAnnotation.value()) {
+                        if (${ simpleName }.class.equals(service.value())) {
+                            serviceAnnotation = service;
+                            break;
+                        }
+                    }
+                }
+            }
+            String id = serviceAnnotation != null ? serviceAnnotation.id() : null;
+            String description = serviceAnnotation != null  ? serviceAnnotation.description() : null;
+            Integer priority = serviceAnnotation != null ? serviceAnnotation.priority() : null;
+            boolean outOfService = serviceImpl.getClass().getAnnotation(OutOfService.class) != null;
+
+            return new ServiceImplementation(serviceImpl, id, description, priority, outOfService);
+
+        } catch (NoClassDefFoundError e) {
+            // ignore
+        }
+
+        return null;
+
+    }
+
+    private static ServiceImplementation getServiceImplementationByProperty(${ simpleName } serviceImpl) {
+
+        // first try to get config from property file
+        final String propertyFileName = "/META-INF/spiap/" + ${ simpleName }.class.getCanonicalName() + "/" + serviceImpl.getClass().getCanonicalName() + ".properties";
+        InputStream inputStream = ${ simpleName }ServiceLocator.class.getResourceAsStream(propertyFileName);
+        if (inputStream != null) {
+
+            try {
+                Properties properties = new Properties();
+                properties.load(inputStream);
+
+                String id = properties.getProperty("${constants.id}");
+                String description = properties.getProperty("${constants.description}");
+                int priority = Integer.valueOf(properties.getProperty("${constants.priority}"));
+                boolean outOfService= Boolean.valueOf(properties.getProperty("${constants.outOfService}"));
+
+                return new ServiceImplementation(serviceImpl, id, description, priority, outOfService);
+
+            } catch (Exception e) {
+                // do nothing
+            }
+        }
+
+        return null;
+
+    }
+
+
+    public static ServiceImplementation getServiceImplementation(${ simpleName } serviceImpl) {
+
+        // first try to get config from property file
+        ServiceImplementation serviceKey = getServiceImplementationByProperty(serviceImpl);
+
+        if (serviceKey != null) {
+            return serviceKey;
+        }
+
+        // try to get ServiceKey from annotation
+        serviceKey = getServiceImplementationByAnnotations(serviceImpl);
+        if (serviceKey != null) {
+            return serviceKey;
+        }
+
+        // return default service key
+        return new ServiceImplementation(serviceImpl, null, null, null, false);
+
+    }
+
 
    /**
     * Comparator which allows sorting of service implementations by priority.
     */
-    public static class ServicePriorityComparator implements Comparator<${ simpleName }> {
+    public static class ServicePriorityComparator implements Comparator<ServiceImplementation> {
 
-        public int compare (${ simpleName } o1,${ simpleName } o2){
+        public int compare (ServiceImplementation o1,ServiceImplementation o2){
             if (o1 == null && o2 == null) {
                 return 0;
             } else if (o1 != null && o2 == null) {
@@ -97,13 +174,11 @@ public class ${ simpleName }ServiceLocator {
             } else if (o1 == null && o2 != null) {
                  return -1;
             } else {
-                ServiceKey sk1 = new ServiceKey(o1);
-                ServiceKey sk2 = new ServiceKey(o2);
 
-                if (sk1.priority == sk2.priority) {
+                if (o1.priority == o2.priority) {
                     return 0;
                 } else {
-                    return sk1.getPriority() < sk2.getPriority() ? -1 : 1;
+                    return o1.getPriority() < o2.getPriority() ? -1 : 1;
                 }
 
             }
@@ -115,30 +190,10 @@ public class ${ simpleName }ServiceLocator {
      * Get {@link ServiceKey} for all available implementations.
      * @return a list that contains ServiceKeys for all available service implementations, or an empty List if none could be found.
      */
-    public static List<${ simpleName }ServiceLocator.ServiceKey> getServiceKeys() {
-        List<${ simpleName }ServiceLocator.ServiceKey> result = new ArrayList<${ simpleName }ServiceLocator.ServiceKey>();
+    public static List<${ simpleName }ServiceLocator.ServiceImplementation> getServiceImplementations() {
 
-        for (${ simpleName } serviceImpl : locateAll()) {
-            result.add(new ${ simpleName }ServiceLocator.ServiceKey(serviceImpl));
-        }
-
-        return result;
-    }
-
-    /**
-     * locate a service implementation with a specific {@link ServiceKey}.
-     *
-     * @param serviceKey the service key to search
-     * @return the service implementation with the service key
-     * @throws ImplementationNotFoundException if either passed service key, it's id are null or if the service implementation can't be found.
-     */
-    public static ${ simpleName } locateByServiceKey(${ simpleName }ServiceLocator.ServiceKey serviceKey) {
-
-        if (serviceKey == null) {
-            throw new ImplementationNotFoundException(null);
-        }
-
-        return locateById(serviceKey.getId());
+        locateAll();
+        return new ArrayList(serviceImplementations);
 
     }
 
@@ -152,11 +207,13 @@ public class ${ simpleName }ServiceLocator {
     public static ${ simpleName } locateById(String id) {
 
         if (id != null) {
-            for (${ simpleName } serviceImpl : locateAll()) {
 
-                ServiceKey sk = new ServiceKey(serviceImpl);
-                if (id.equals(sk.getId())) {
-                    return serviceImpl;
+            locateAll();
+
+            for (ServiceImplementation serviceImpl : serviceImplementations) {
+
+                if (id.equals(serviceImpl.getId())) {
+                    return serviceImpl.getServiceInstance();
                 }
             }
         }
@@ -176,7 +233,7 @@ public class ${ simpleName }ServiceLocator {
      * The first implementation returned by the locateAll method will be returned if more than one implementation is available.
      * Successive calls may return different service implementations.
      * @return returns the first Implementation found via locateAll method call.
-     **/
+     */
     public static ${ simpleName } locate() {
         final List services = locateAll();
         return services.isEmpty() ? (${ simpleName })null : (${ simpleName })services.get(0);
@@ -188,25 +245,50 @@ public class ${ simpleName }ServiceLocator {
      */
     public static List< ${ simpleName } > locateAll() {
 
-        final Iterator<${ simpleName }> iterator = ServiceLoader.load(${ simpleName }.class).iterator();
-        final List<${ simpleName }> services = new ArrayList<${ simpleName }>();
+        if (serviceImplementations == null) {
 
-        while (iterator.hasNext()) {
-            try {
+            final Iterator<${ simpleName }> iterator = ServiceLoader.load(${ simpleName }.class).iterator();
+            final List<ServiceImplementation> tmpServiceImplementations = new ArrayList<ServiceImplementation>();
 
-                ${ simpleName } service = iterator.next();
-                if (service.getClass().getAnnotation(OutOfService.class) == null){
-                    services.add(service);
+            while (iterator.hasNext()) {
+                try {
+
+                    ${ simpleName } service = iterator.next();
+
+                    ServiceImplementation serviceImpl = getServiceImplementation(service);
+                    if (!serviceImpl.isOutOfService()) {
+                        tmpServiceImplementations.add(serviceImpl);
+                    }
+
+                }
+                catch (Error e) {
+                    e.printStackTrace(System.err);
                 }
             }
-            catch (Error e) {
-                e.printStackTrace(System.err);
-            }
+
+            Collections.sort(tmpServiceImplementations, new ServicePriorityComparator());
+
+            serviceImplementations = tmpServiceImplementations;
+
         }
 
-        Collections.sort(services, new ServicePriorityComparator());
+        // Now return services
+        final List<${ simpleName }> services = new ArrayList<${ simpleName }>();
+
+        for (ServiceImplementation service : serviceImplementations) {
+            services.add(service.getServiceInstance());
+        }
+
         return services;
 
+    }
+
+    /**
+     * Clear cache and reload services.
+     */
+    public static void reloadServices() {
+        serviceImplementations = null;
+        locateAll();
     }
 
 }

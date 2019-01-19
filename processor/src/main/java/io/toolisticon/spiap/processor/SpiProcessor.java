@@ -114,6 +114,14 @@ public class SpiProcessor extends AbstractAnnotationProcessor {
         model.put("canonicalName", typeElement.getQualifiedName().toString());
         model.put("simpleName", typeElement.getSimpleName().toString());
 
+        Map<String, Object> constants = new HashMap<String, Object>();
+        constants.put("id", Constants.PROPERTY_KEY_ID);
+        constants.put("description", Constants.PROPERTY_KEY_DESCRIPTION);
+        constants.put("priority", Constants.PROPERTY_KEY_PRIORITY);
+        constants.put("outOfService", Constants.PROPERTY_KEY_OUT_OF_SERVICE);
+
+        model.put("constants", constants);
+
         String filePath = packageElement.getQualifiedName().toString() + "." + typeElement.getSimpleName().toString() + "ServiceLocator";
 
         try {

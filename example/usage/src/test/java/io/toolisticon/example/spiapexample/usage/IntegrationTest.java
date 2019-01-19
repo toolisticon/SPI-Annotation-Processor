@@ -15,7 +15,7 @@ public class IntegrationTest {
 
     @Ignore
     @Test
-    public  void main() {
+    public void main() {
 
         System.out.println("SAY '" + HelloWorldSpiInterfaceServiceLocator.locate().doSomething() + "' !");
 
@@ -23,14 +23,13 @@ public class IntegrationTest {
         int operand1 = 5;
         int operand2 = 3;
 
-        List<DecimalCalculationOperationServiceLocator.ServiceKey> operationServiceKeys = DecimalCalculationOperationServiceLocator.getServiceKeys();
-        for (DecimalCalculationOperationServiceLocator.ServiceKey sk : operationServiceKeys) {
+        List<DecimalCalculationOperationServiceLocator.ServiceImplementation> serviceImpls = DecimalCalculationOperationServiceLocator.getServiceImplementations();
+        for (DecimalCalculationOperationServiceLocator.ServiceImplementation serviceImpl : serviceImpls) {
 
-            int result = DecimalCalculationOperationServiceLocator.locateByServiceKey(sk).invokeOperation(operand1, operand2);
-            System.out.println(String.format("Impl. ID: '%s' , description: '%s' , operand1 : %d , operand2 : %d , result : %d", sk.getId(), sk.getDescription(), operand1, operand2, result));
+            int result = serviceImpl.getServiceInstance().invokeOperation(operand1, operand2);
+            System.out.println(String.format("Impl. ID: '%s' , description: '%s' , operand1 : %d , operand2 : %d , result : %d", serviceImpl.getId(), serviceImpl.getDescription(), operand1, operand2, result));
 
         }
-
 
 
     }

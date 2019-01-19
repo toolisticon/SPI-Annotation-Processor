@@ -21,9 +21,11 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
 import javax.tools.StandardLocation;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 /**
@@ -148,6 +150,7 @@ public class ServiceProcessor extends AbstractAnnotationProcessor {
 
         if (serviceAnnotation != null) {
 
+
             Set<String> spiInterfaces = new HashSet<String>();
             String spiAttributeTypes = AnnotationValueUtils.getTypeMirrorValue(AnnotationUtils.getAnnotationValueOfAttribute(serviceAnnotation)).toString();
             if (spiAttributeTypes != null) {
@@ -175,6 +178,9 @@ public class ServiceProcessor extends AbstractAnnotationProcessor {
 
                 }
 
+                // Add configuration property file
+                writePropertiesFile(typeElement, serviceAnnotation);
+
                 // put service provider implementations in map by using the SPI fqn as key
                 serviceImplHashMap.put(fqTypeName, typeElement.getQualifiedName().toString());
 
@@ -183,7 +189,55 @@ public class ServiceProcessor extends AbstractAnnotationProcessor {
 
         }
     }
-    
+
+    /**
+     * This method generates the property files of configured service annotation values.
+     * This allows us not to get rid of spiap-api dependency at runtime.
+     *
+     * @param annotatedTypeElement the annotated element
+     * @param annotationMirror     The Service annotations AnotationMirror
+     */
+    private void writePropertiesFile(TypeElement annotatedTypeElement, AnnotationMirror annotationMirror) {
+
+
+        String spiClassName = AnnotationValueUtils.getClassValue(AnnotationUtils.getAnnotationValueOfAttribute(annotationMirror)).toString();
+        String serviceClassName = annotatedTypeElement.getQualifiedName().toString();
+        String fileName = "META-INF/spiap/" + spiClassName + "/" + serviceClassName + ".properties";
+
+        try {
+
+            // write service provider file by using a template
+            SimpleResourceWriter propertiesFileObjectWriter = FilerUtils.createResource(StandardLocation.SOURCE_OUTPUT, "", fileName);
+
+            // get id
+            String id = AnnotationValueUtils.getStringValue(AnnotationUtils.getAnnotationValueOfAttributeWithDefaults(annotationMirror, "id"));
+
+            // Get properties
+            Properties properties = new Properties();
+
+            // default to fqn of service if id is empty
+            properties.setProperty(Constants.PROPERTY_KEY_ID, !id.isEmpty() ? id : serviceClassName);
+            properties.setProperty(Constants.PROPERTY_KEY_DESCRIPTION, AnnotationValueUtils.getStringValue(AnnotationUtils.getAnnotationValueOfAttributeWithDefaults(annotationMirror, "description")));
+            properties.setProperty(Constants.PROPERTY_KEY_PRIORITY, "" + AnnotationValueUtils.getIntegerValue(AnnotationUtils.getAnnotationValueOfAttributeWithDefaults(annotationMirror, "priority")));
+            properties.setProperty(Constants.PROPERTY_KEY_OUT_OF_SERVICE, "" + (AnnotationUtils.getAnnotationMirror(annotatedTypeElement, OutOfService.class) != null));
+
+            StringWriter writer = new StringWriter();
+            properties.store(writer, "Property files used by the spi service locator");
+            writer.flush();
+            writer.close();
+
+            propertiesFileObjectWriter.write(writer.toString());
+            propertiesFileObjectWriter.close();
+
+
+        } catch (IOException e) {
+            MessagerUtils.error(annotatedTypeElement, "Wasn't able to write service provider properties file for service ${0} for spi ${1}", serviceClassName, spiClassName);
+            return;
+        }
+
+    }
+
+
     private void writeConfigurationFiles() {
 
         // Iterate through services that were detected by the annotation processor

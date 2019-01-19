@@ -3,8 +3,13 @@ package io.toolisticon.spiap.processor;
 import io.toolisticon.annotationprocessortoolkit.tools.MessagerUtils;
 import io.toolisticon.compiletesting.CompileTestBuilder;
 import io.toolisticon.compiletesting.JavaFileObjectUtils;
+import io.toolisticon.compiletesting.UnitTestProcessor;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
+
+import javax.annotation.processing.ProcessingEnvironment;
+import javax.lang.model.element.TypeElement;
 
 /**
  * Tests of {@link SpiProcessor}.
@@ -41,5 +46,17 @@ public class SpiServiceLocatorProcessorTest {
                 .testCompilation();
     }
 
+
+    @Test
+    @Ignore
+    public void test_unexpectedException() {
+        CompileTestBuilder.unitTest().useProcessor(new UnitTestProcessor() {
+            @Override
+            public void unitTest(ProcessingEnvironment processingEnvironment, TypeElement typeElement) {
+                throw new NullPointerException();
+            }
+        })
+                .testCompilation();
+    }
 
 }
