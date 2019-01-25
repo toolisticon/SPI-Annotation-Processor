@@ -18,7 +18,6 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.ServiceLoader;
 
-import javax.annotation.Generated;
 
 /**
  * A generic service locator.
