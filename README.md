@@ -128,10 +128,11 @@ It's also possible to implement more than one SPI in a class by using the Servic
 	System.out.println(ExampleSpiInterfaceServiceLocator.locate().doSomething());
 
 
-See our examples subprojects about how to use the annotations.
+It's not required to have the spiap-api dependency at runtime anymore since settings of annotations will be stored in a generated property file (stored in /META-INF/spiap/&lt;service interface fqn&gt;/&lt;service implementation fqn&gt;.properties).
+See our examples subprojects for further information.
 
 ## Disable service implementations in the service locator
-Just add the OutOfService annotation next to the Services or Service annotation to disable the service implementation in the service locator.
+Just add the _OutOfService_ annotation next to the Services or Service annotation to disable the service implementation in the service locator.
 
 # Contributing
 
