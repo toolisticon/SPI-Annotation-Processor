@@ -7,7 +7,7 @@
     <parent>
         <groupId>io.toolisticon.spiap</groupId>
         <artifactId>integrationTest-parent</artifactId>
-        <version>0.7.0</version>
+        <version>0.7.1-SNAPSHOT</version>
     </parent>
 
     <name>integrationTest-withSpiapApi</name>
