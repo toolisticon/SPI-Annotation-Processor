@@ -12,10 +12,10 @@
     </parent>
 
     <name>integrationTest</name>
-    <description>Please refer to https://github.com/holisticon/annotation-processotool-kit</description>
 
 
     <modules>
+        <module>baseCode</module>
         <module>withSpiapApi</module>
         <module>withoutSpiapApi</module>
     </modules>

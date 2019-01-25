@@ -2,7 +2,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>integrationTest-withSpiapApi</artifactId>
+    <artifactId>integrationTest-baseCode</artifactId>
     <packaging>bundle</packaging>
 
     <parent>
@@ -11,9 +11,7 @@
         <version>0.6.1-SNAPSHOT</version>
     </parent>
 
-    <name>integrationTest-withSpiapApi</name>
-    <description>Please refer to https://github.com/holisticon/annotation-processotool-kit</description>
-
+    <name>integrationTest-baseCode</name>
 
     <dependencyManagement>
 
@@ -110,18 +108,12 @@
             <groupId>io.toolisticon.spiap</groupId>
             <artifactId>example-api</artifactId>
             <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>io.toolisticon.spiap</groupId>
-            <artifactId>example-service</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>io.toolisticon.spiap</groupId>
-            <artifactId>integrationTest-baseCode</artifactId>
-            <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.toolisticon.spiap</groupId>
+                    <artifactId>spiap-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
     </dependencies>

@@ -12,7 +12,6 @@
     </parent>
 
     <name>integrationTest-withoutSpiapApi</name>
-    <description>Please refer to https://github.com/holisticon/annotation-processotool-kit</description>
 
 
     <dependencyManagement>
@@ -128,6 +127,12 @@
                     <artifactId>spiap-api</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>io.toolisticon.spiap</groupId>
+            <artifactId>integrationTest-baseCode</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
 

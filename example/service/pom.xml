@@ -11,8 +11,6 @@
     </parent>
 
     <name>example-service</name>
-    <description>Please refer to https://github.com/holisticon/spi-ap</description>
-
 
     <dependencies>
 

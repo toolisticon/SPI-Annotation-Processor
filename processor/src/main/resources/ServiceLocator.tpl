@@ -7,6 +7,7 @@ import io.toolisticon.spiap.api.OutOfService;
 
 import java.io.InputStream;
 import java.lang.NoClassDefFoundError;
+import java.lang.NumberFormatException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -16,6 +17,8 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.ServiceLoader;
+
+import javax.annotation.Generated;
 
 /**
  * A generic service locator.
@@ -50,13 +53,25 @@ public class ${ simpleName }ServiceLocator {
         private final boolean outOfService;
         private final ${ simpleName } serviceInstance;
 
-        private ServiceImplementation(${ simpleName } serviceInstance, String id, String description, Integer priority, boolean outOfService) {
+        /**
+         * Initial default config
+         */
+        private ServiceImplementation(${ simpleName } serviceInstance) {
             this.serviceInstance = serviceInstance;
-            this.id = id != null ? id : serviceInstance.getClass().getCanonicalName();
-            this.description = description != null ? description : "";
-            this.priority = priority !=null ? priority : 0;
-            this.outOfService = outOfService;
+            this.id = serviceInstance.getClass().getCanonicalName();
+            this.description = "";
+            this.priority = 0;
+            this.outOfService = false;
         }
+
+        private ServiceImplementation(ServiceImplementation previousConfig, String id, String description, Integer priority, Boolean outOfService) {
+            this.serviceInstance = previousConfig.getServiceInstance();
+            this.id = id != null ? id : previousConfig.getId();
+            this.description = description != null ? description : previousConfig.getDescription();
+            this.priority = priority !=null ? priority : previousConfig.getPriority();
+            this.outOfService = outOfService != null ? outOfService : previousConfig.isOutOfService();
+        }
+
 
         public String getId() {
             return id;
@@ -82,7 +97,7 @@ public class ${ simpleName }ServiceLocator {
     }
 
 
-    private static ServiceImplementation getServiceImplementationByAnnotations(${ simpleName } serviceImpl) {
+    private static ServiceImplementation getServiceImplementationByAnnotations(ServiceImplementation previousConfig, ${ simpleName } serviceImpl) {
 
         try {
             Service serviceAnnotation = serviceImpl.getClass().getAnnotation(Service.class);
@@ -102,17 +117,17 @@ public class ${ simpleName }ServiceLocator {
             Integer priority = serviceAnnotation != null ? serviceAnnotation.priority() : null;
             boolean outOfService = serviceImpl.getClass().getAnnotation(OutOfService.class) != null;
 
-            return new ServiceImplementation(serviceImpl, id, description, priority, outOfService);
+            return new ServiceImplementation(previousConfig, id, description, priority, outOfService);
 
         } catch (NoClassDefFoundError e) {
             // ignore
         }
 
-        return null;
+        return previousConfig;
 
     }
 
-    private static ServiceImplementation getServiceImplementationByProperty(${ simpleName } serviceImpl) {
+    private static ServiceImplementation getServiceImplementationByProperty(ServiceImplementation previousConfig, ${ simpleName } serviceImpl) {
 
         // first try to get config from property file
         final String propertyFileName = "/META-INF/spiap/" + ${ simpleName }.class.getCanonicalName() + "/" + serviceImpl.getClass().getCanonicalName() + ".properties";
@@ -125,38 +140,45 @@ public class ${ simpleName }ServiceLocator {
 
                 String id = properties.getProperty("${constants.id}");
                 String description = properties.getProperty("${constants.description}");
-                int priority = Integer.valueOf(properties.getProperty("${constants.priority}"));
-                boolean outOfService= Boolean.valueOf(properties.getProperty("${constants.outOfService}"));
+                Integer priority = null;
+                try {
+                    String priorityString = properties.getProperty("${constants.priority}");
+                    if (priorityString != null) {
+                        priority = Integer.valueOf(priorityString);
+                    }
+                } catch (NumberFormatException e) {
+                    // ignore
+                }
 
-                return new ServiceImplementation(serviceImpl, id, description, priority, outOfService);
+                Boolean outOfService = null;
+                String outOfServiceString = properties.getProperty("${constants.outOfService}");
+                if (outOfServiceString != null) {
+                    outOfService = Boolean.valueOf(outOfServiceString);
+                }
+
+                return new ServiceImplementation(previousConfig, id, description, priority, outOfService);
 
             } catch (Exception e) {
                 // do nothing
             }
         }
 
-        return null;
+        return previousConfig;
 
     }
 
 
     public static ServiceImplementation getServiceImplementation(${ simpleName } serviceImpl) {
 
-        // first try to get config from property file
-        ServiceImplementation serviceKey = getServiceImplementationByProperty(serviceImpl);
-
-        if (serviceKey != null) {
-            return serviceKey;
-        }
+        // create default config
+        ServiceImplementation serviceKey = new ServiceImplementation(serviceImpl);
 
         // try to get ServiceKey from annotation
-        serviceKey = getServiceImplementationByAnnotations(serviceImpl);
-        if (serviceKey != null) {
-            return serviceKey;
-        }
+        serviceKey = getServiceImplementationByAnnotations(serviceKey, serviceImpl);
 
-        // return default service key
-        return new ServiceImplementation(serviceImpl, null, null, null, false);
+        serviceKey = getServiceImplementationByProperty(serviceKey, serviceImpl);
+
+        return serviceKey;
 
     }
 

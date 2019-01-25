@@ -1,4 +1,4 @@
-package io.toolisticon.spiap.processor;
+package io.toolisticon.spiap.integrationtest;
 
 import io.toolisticon.example.spiapexample.api.DecimalCalculationOperation;
 import io.toolisticon.example.spiapexample.api.DecimalCalculationOperationServiceLocator;
@@ -6,6 +6,7 @@ import io.toolisticon.example.spiapexample.service.AdditionDecimalOperationImpl;
 import io.toolisticon.example.spiapexample.service.DivisionDecimalOperationImpl;
 import io.toolisticon.example.spiapexample.service.MultiplicationDecimalOperationImpl;
 import io.toolisticon.example.spiapexample.service.SubtractionDecimalOperationImpl;
+import io.toolisticon.spiap.interationtest.SquareDecimalOperationServiceImpl;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -28,7 +29,7 @@ public class GeneratedServiceLocatorFileTest {
 
         List<io.toolisticon.example.spiapexample.api.DecimalCalculationOperationServiceLocator.ServiceImplementation> operationServiceKeys = DecimalCalculationOperationServiceLocator.getServiceImplementations();
 
-        MatcherAssert.assertThat(operationServiceKeys, Matchers.hasSize(4));
+        MatcherAssert.assertThat(operationServiceKeys, Matchers.hasSize(5));
 
         Set<String> ids = new HashSet<String>();
         for (DecimalCalculationOperationServiceLocator.ServiceImplementation sk : operationServiceKeys) {
@@ -36,7 +37,7 @@ public class GeneratedServiceLocatorFileTest {
         }
 
         // check if id referenced and fqn referenced service implementations have been found
-        MatcherAssert.assertThat(ids, Matchers.containsInAnyOrder("MULTIPLICATION", "ADDITION", "SUBTRACTION", DivisionDecimalOperationImpl.class.getCanonicalName()));
+        MatcherAssert.assertThat(ids, Matchers.containsInAnyOrder("SQUARE", "MULTIPLICATION", "ADDITION", "SUBTRACTION", DivisionDecimalOperationImpl.class.getCanonicalName()));
 
 
     }
@@ -54,7 +55,7 @@ public class GeneratedServiceLocatorFileTest {
         }
 
         // check if id referenced and fqn referenced service implementations have been found
-        MatcherAssert.assertThat(serviceIds, Matchers.containsInAnyOrder(MultiplicationDecimalOperationImpl.class.getCanonicalName(), AdditionDecimalOperationImpl.class.getCanonicalName(), SubtractionDecimalOperationImpl.class.getCanonicalName(), DivisionDecimalOperationImpl.class.getCanonicalName()));
+        MatcherAssert.assertThat(serviceIds, Matchers.containsInAnyOrder(SquareDecimalOperationServiceImpl.class.getCanonicalName(), MultiplicationDecimalOperationImpl.class.getCanonicalName(), AdditionDecimalOperationImpl.class.getCanonicalName(), SubtractionDecimalOperationImpl.class.getCanonicalName(), DivisionDecimalOperationImpl.class.getCanonicalName()));
 
     }
 
@@ -97,12 +98,13 @@ public class GeneratedServiceLocatorFileTest {
 
         List<DecimalCalculationOperation> result = DecimalCalculationOperationServiceLocator.locateAll();
 
-        MatcherAssert.assertThat(result, Matchers.hasSize(4));
+        MatcherAssert.assertThat(result, Matchers.hasSize(5));
 
-        MatcherAssert.assertThat(result.get(0), Matchers.instanceOf(AdditionDecimalOperationImpl.class));
-        MatcherAssert.assertThat(result.get(1), Matchers.instanceOf(SubtractionDecimalOperationImpl.class));
-        MatcherAssert.assertThat(result.get(2), Matchers.instanceOf(DivisionDecimalOperationImpl.class));
-        MatcherAssert.assertThat(result.get(3), Matchers.instanceOf(MultiplicationDecimalOperationImpl.class));
+        MatcherAssert.assertThat(result.get(0), Matchers.instanceOf(SquareDecimalOperationServiceImpl.class));
+        MatcherAssert.assertThat(result.get(1), Matchers.instanceOf(AdditionDecimalOperationImpl.class));
+        MatcherAssert.assertThat(result.get(2), Matchers.instanceOf(SubtractionDecimalOperationImpl.class));
+        MatcherAssert.assertThat(result.get(3), Matchers.instanceOf(DivisionDecimalOperationImpl.class));
+        MatcherAssert.assertThat(result.get(4), Matchers.instanceOf(MultiplicationDecimalOperationImpl.class));
 
 
     }
@@ -113,12 +115,13 @@ public class GeneratedServiceLocatorFileTest {
 
         List<DecimalCalculationOperationServiceLocator.ServiceImplementation> result = DecimalCalculationOperationServiceLocator.getServiceImplementations();
 
-        MatcherAssert.assertThat(result, Matchers.hasSize(4));
+        MatcherAssert.assertThat(result, Matchers.hasSize(5));
 
-        MatcherAssert.assertThat(result.get(0).getId(), Matchers.is("ADDITION"));
-        MatcherAssert.assertThat(result.get(1).getId(), Matchers.is("SUBTRACTION"));
-        MatcherAssert.assertThat(result.get(2).getId(), Matchers.is("io.toolisticon.example.spiapexample.service.DivisionDecimalOperationImpl"));
-        MatcherAssert.assertThat(result.get(3).getId(), Matchers.is("MULTIPLICATION"));
+        MatcherAssert.assertThat(result.get(0).getId(), Matchers.is("SQUARE"));
+        MatcherAssert.assertThat(result.get(1).getId(), Matchers.is("ADDITION"));
+        MatcherAssert.assertThat(result.get(2).getId(), Matchers.is("SUBTRACTION"));
+        MatcherAssert.assertThat(result.get(3).getId(), Matchers.is("io.toolisticon.example.spiapexample.service.DivisionDecimalOperationImpl"));
+        MatcherAssert.assertThat(result.get(4).getId(), Matchers.is("MULTIPLICATION"));
 
 
     }
