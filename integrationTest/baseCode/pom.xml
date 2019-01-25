@@ -1,38 +1,21 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>example-parent</artifactId>
-    <packaging>pom</packaging>
+    <artifactId>integrationTest-baseCode</artifactId>
+    <packaging>bundle</packaging>
 
     <parent>
         <groupId>io.toolisticon.spiap</groupId>
-        <artifactId>spiap-parent</artifactId>
+        <artifactId>integrationTest-parent</artifactId>
         <version>0.6.1-SNAPSHOT</version>
     </parent>
 
-    <name>example-parent</name>
-
-    <modules>
-        <module>api</module>
-        <module>service</module>
-        <module>usage</module>
-    </modules>
+    <name>integrationTest-baseCode</name>
 
     <dependencyManagement>
 
         <dependencies>
-
-            <dependency>
-                <groupId>io.toolisticon.spiap</groupId>
-                <artifactId>example-api</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>io.toolisticon.spiap</groupId>
-                <artifactId>example-service</artifactId>
-                <version>${project.version}</version>
-            </dependency>
 
 
         </dependencies>
@@ -106,7 +89,6 @@
                 </configuration>
             </plugin>
 
-
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
@@ -119,6 +101,22 @@
 
 
     </build>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>io.toolisticon.spiap</groupId>
+            <artifactId>example-api</artifactId>
+            <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.toolisticon.spiap</groupId>
+                    <artifactId>spiap-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+    </dependencies>
 
 
 </project>
