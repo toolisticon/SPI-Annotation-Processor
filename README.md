@@ -155,13 +155,8 @@ The likelihood of a pull request being used rises with the following properties:
 
 - (2017) Tobias Stamann (Holisticon AG)
 
-## Sponsoring
-
-This project is sponsored and supported by [holisticon AG](http://www.holisticon.de/)
-
-![Holisticon AG](https://raw.githubusercontent.com/toolisticon/toolisticon.github.io/master/holisticon-logo.png)
 # License
 
-This project is released under the revised [BSD License](LICENSE).
+This project is released under the revised [MIT License](LICENSE).
 
-This project includes and repackages the [Annotation-Processor-Toolkit](https://github.com/holisticon/annotation-processor-toolkit) released under the  [BSD License](/3rdPartyLicenses/annotation-processor-toolkit/LICENSE.txt).
+This project includes and repackages the [Annotation-Processor-Toolkit](https://github.com/holisticon/annotation-processor-toolkit) released under the  [MIT License](/3rdPartyLicenses/annotation-processor-toolkit/LICENSE.txt).
