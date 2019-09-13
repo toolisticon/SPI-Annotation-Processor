@@ -6,7 +6,7 @@
 
 # Why you should use this project?
 
-If you want to use a service provider interface (SPI) you need to register your service implementation in the /META-INF/services/&lt;Full qualified spi interface name&gt; file.
+If you want to use a service provider interface (_SPI_) you need to register your service implementation in the _/META-INF/services/&lt;Full qualified spi interface name&gt;_ file.
 Additionally you usually need to write a service locator to be able to use the service implementation.
 
 The annotation processor offered by this project provides exactly this. It allows you to create the service locator file just by adding an annotation to you spi implementation.
@@ -14,7 +14,7 @@ Additionally it will generate a service locator for you.
 
 # Features
 Annotation processor that
-- provides support for generating service locator file in /META-INF/services/&lt;Full qualified spi interface name&gt;
+- provides support for generating service locator file in _/META-INF/services/&lt;Full qualified spi interface name&gt;_
 - provides support for generating service locator class for accessing the SPI implementations
 
 # How does it work?
