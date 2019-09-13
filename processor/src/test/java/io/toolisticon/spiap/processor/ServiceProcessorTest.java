@@ -27,7 +27,7 @@ public class ServiceProcessorTest {
     public void test_validUsage() {
 
         compileTestBuilder
-                .addSources(JavaFileObjectUtils.readFromResource("serviceprocessor/TestcaseValidUsage.java"))
+                .addSources("serviceprocessor/TestcaseValidUsage.java")
                 .compilationShouldSucceed()
                 .testCompilation();
     }
@@ -36,7 +36,7 @@ public class ServiceProcessorTest {
     @Test
     public void test_annotationMustBePlacedOnClass() {
         compileTestBuilder
-                .addSources(JavaFileObjectUtils.readFromResource("serviceprocessor/TestcaseUsageOnInterface.java"))
+                .addSources("serviceprocessor/TestcaseUsageOnInterface.java")
                 .compilationShouldFail()
                 .expectedErrorMessages(ServiceProcessorMessages.ERROR_SPI_ANNOTATION_MUST_BE_PLACED_ON_CLASS.getCode())
                 .testCompilation();
@@ -46,7 +46,7 @@ public class ServiceProcessorTest {
     @Test
     public void test_annotationValueAttributeMustOnlyContainInterfaces() {
         compileTestBuilder
-                .addSources(JavaFileObjectUtils.readFromResource("serviceprocessor/TestcaseValueAttributeMustOnlyContainInterfaces.java"))
+                .addSources("serviceprocessor/TestcaseValueAttributeMustOnlyContainInterfaces.java")
                 .compilationShouldFail()
                 .expectedErrorMessages(ServiceProcessorMessages.ERROR_VALUE_ATTRIBUTE_MUST_ONLY_CONTAIN_INTERFACES.getCode())
                 .testCompilation();
@@ -55,7 +55,7 @@ public class ServiceProcessorTest {
     @Test
     public void test_annotatedTypeMustImplementConfiguredInterfaces() {
         compileTestBuilder
-                .addSources(JavaFileObjectUtils.readFromResource("serviceprocessor/TestcaseMustImplementAnnotatedInterface.java"))
+                .addSources("serviceprocessor/TestcaseMustImplementAnnotatedInterface.java")
                 .compilationShouldFail()
                 .expectedErrorMessages(ServiceProcessorMessages.ERROR_ANNOTATED_CLASS_MUST_IMPLEMENT_CONFIGURED_INTERFACES.getCode())
                 .testCompilation();
@@ -64,16 +64,15 @@ public class ServiceProcessorTest {
     @Test
     public void test_processingShouldSucceesWithPlainInterfaces() {
         compileTestBuilder
-                .addSources(JavaFileObjectUtils.readFromResource("serviceprocessor/TestcaseValidUseWithPlainInterface.java"))
+                .addSources("serviceprocessor/TestcaseValidUseWithPlainInterface.java")
                 .compilationShouldSucceed()
                 .testCompilation();
     }
 
-    //--
     @Test
     public void test_multipleServicesImplemented() {
         compileTestBuilder
-                .addSources(JavaFileObjectUtils.readFromResource("serviceprocessor/TestcaseMultipleServices.java"))
+                .addSources("serviceprocessor/TestcaseMultipleServices.java")
                 .compilationShouldSucceed()
                 .testCompilation();
     }
@@ -82,7 +81,7 @@ public class ServiceProcessorTest {
     @Test
     public void test_OutOfServiceAnnotatedServicesShouldntBeProcessed() {
         compileTestBuilder
-                .addSources(JavaFileObjectUtils.readFromResource("serviceprocessor/TestcaseDontProcessOutOfServiceService.java"))
+                .addSources("serviceprocessor/TestcaseDontProcessOutOfServiceService.java")
                 .expectedNoteMessages(ServiceProcessorMessages.INFO_SKIP_ELEMENT_ANNOTATED_AS_OUT_OF_SERVICE.getCode())
                 .compilationShouldSucceed()
                 .testCompilation();

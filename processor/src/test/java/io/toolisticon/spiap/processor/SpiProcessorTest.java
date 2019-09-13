@@ -25,7 +25,7 @@ public class SpiProcessorTest {
     public void test_validUsage() {
 
         compileTestBuilder
-                .addSources(JavaFileObjectUtils.readFromResource("/spiprocessor/spi/TestcaseValidUsage.java"))
+                .addSources("/spiprocessor/spi/TestcaseValidUsage.java")
                 .compilationShouldSucceed()
                 .testCompilation();
 
@@ -35,7 +35,7 @@ public class SpiProcessorTest {
     public void test_testAnnotationWasPutOnClass() {
 
         compileTestBuilder
-                .addSources(JavaFileObjectUtils.readFromResource("/spiprocessor/spi/TestcaseAnnotationOnClass.java"))
+                .addSources("/spiprocessor/spi/TestcaseAnnotationOnClass.java")
                 .compilationShouldFail()
                 .expectedErrorMessages(SpiProcessorMessages.ERROR_SPI_ANNOTATION_MUST_BE_PLACED_ON_INTERFACE.getCode())
                 .testCompilation();
