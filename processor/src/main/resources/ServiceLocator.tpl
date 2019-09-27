@@ -317,9 +317,14 @@ public class ${ simpleName }ServiceLocator {
         locateAll();
     }
 
+    /**
+     * Sets the classloader to use.
+     * @param classLoader The class loader to be used to load provider-configuration files and provider classes, or null if the currents thread is to be used
+     */
     public static void setClassLoaderToUse(ClassLoader classLoader) {
         classLoaderToUse = classLoader;
     }
+
 
     private static ClassLoader getClassLoaderToUse () {
         return classLoaderToUse != null ? classLoaderToUse : Thread.currentThread().getContextClassLoader();
