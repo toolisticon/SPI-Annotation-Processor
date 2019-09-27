@@ -6,8 +6,10 @@ import io.toolisticon.spiap.api.Services;
 import io.toolisticon.spiap.api.OutOfService;
 
 import java.io.InputStream;
+import java.lang.ClassLoader;
 import java.lang.NoClassDefFoundError;
 import java.lang.NumberFormatException;
+import java.lang.Thread;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -23,6 +25,8 @@ import java.util.ServiceLoader;
  * A generic service locator.
  */
 public class ${ simpleName }ServiceLocator {
+
+    private static ClassLoader classLoaderToUse = null;
 
     /**
      * Caches all loaded services.
@@ -260,15 +264,15 @@ public class ${ simpleName }ServiceLocator {
         return services.isEmpty() ? (${ simpleName })null : (${ simpleName })services.get(0);
     }
 
+
     /**
      * Locates all available service implementations.
      * @return returns a list containing all available service implementations or an empty list, if no implementation can be found.
      */
-    public static List< ${ simpleName } > locateAll() {
-
+     public static List< ${ simpleName } > locateAll() {
         if (serviceImplementations == null) {
 
-            final Iterator<${ simpleName }> iterator = ServiceLoader.load(${ simpleName }.class).iterator();
+            final Iterator<${ simpleName }> iterator = ServiceLoader.load(${ simpleName }.class, getClassLoaderToUse()).iterator();
             final List<ServiceImplementation> tmpServiceImplementations = new ArrayList<ServiceImplementation>();
 
             while (iterator.hasNext()) {
@@ -304,12 +308,21 @@ public class ${ simpleName }ServiceLocator {
 
     }
 
+
     /**
      * Clear cache and reload services.
      */
     public static void reloadServices() {
         serviceImplementations = null;
         locateAll();
+    }
+
+    public static void setClassLoaderToUse(ClassLoader classLoader) {
+        classLoaderToUse = classLoader;
+    }
+
+    private static ClassLoader getClassLoaderToUse () {
+        return classLoaderToUse != null ? classLoaderToUse : Thread.currentThread().getContextClassLoader();
     }
 
 }
