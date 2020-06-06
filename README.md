@@ -20,7 +20,6 @@ Annotation processor that
 # How does it work?
 
 First you need to add the SPI annotation processor dependencies to your project.
-Since the annotation processor has to be there just at compile time, it's ok to use provided scope.
 
 	<dependencies>
 	    <!-- api is just needed in compile scope if you want to use the ServiceLocator features -->
@@ -28,13 +27,22 @@ Since the annotation processor has to be there just at compile time, it's ok to 
 	        <groupId>io.toolisticon.spiap</groupId>
 	        <artifactId>spiap-api</artifactId>
 	    </dependency>
-	    <!-- must be on provided scope since it is just needed at compile time -->
-	    <dependency>
-	        <groupId>io.toolisticon.spiap</groupId>
-	        <artifactId>spiap-processor</artifactId>
-	        <scope>provided</scope>
-	    </dependency>
 	</dependencies>
+
+The annotation processor should be applied by defining it in annotation processor path of maven-compile-plugin:
+
+    <plugin>
+       <artifactId>maven-compiler-plugin</artifactId>
+       <configuration combine.self="append">
+           <annotationProcessorPaths>
+               <path>
+                   <groupId>io.toolisticon.spiap</groupId>
+                   <artifactId>spiap-processor</artifactId>
+                   <version>CURRENT_VERSION</version>
+               </path>
+           </annotationProcessorPaths>
+       </configuration>
+    </plugin>
 
 The annotation processor then will create the configuration into the StandardLocation.SOURCE_OUTPUT folder.
 You need to use the following build-helper-maven-plugin configuration to include the generated resource files into your jar:
