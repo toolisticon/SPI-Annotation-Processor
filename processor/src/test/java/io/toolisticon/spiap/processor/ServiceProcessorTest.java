@@ -29,7 +29,7 @@ public class ServiceProcessorTest {
         compileTestBuilder
                 .addSources("serviceprocessor/TestcaseValidUsage.java")
                 .compilationShouldSucceed()
-                .testCompilation();
+                .executeTest();
     }
 
 
@@ -38,8 +38,8 @@ public class ServiceProcessorTest {
         compileTestBuilder
                 .addSources("serviceprocessor/TestcaseUsageOnInterface.java")
                 .compilationShouldFail()
-                .expectedErrorMessages(ServiceProcessorMessages.ERROR_SPI_ANNOTATION_MUST_BE_PLACED_ON_CLASS.getCode())
-                .testCompilation();
+                .expectErrorMessagesThatContain(ServiceProcessorMessages.ERROR_SPI_ANNOTATION_MUST_BE_PLACED_ON_CLASS.getCode())
+                .executeTest();
     }
 
 
@@ -48,8 +48,8 @@ public class ServiceProcessorTest {
         compileTestBuilder
                 .addSources("serviceprocessor/TestcaseValueAttributeMustOnlyContainInterfaces.java")
                 .compilationShouldFail()
-                .expectedErrorMessages(ServiceProcessorMessages.ERROR_VALUE_ATTRIBUTE_MUST_ONLY_CONTAIN_INTERFACES.getCode())
-                .testCompilation();
+                .expectErrorMessagesThatContain(ServiceProcessorMessages.ERROR_VALUE_ATTRIBUTE_MUST_ONLY_CONTAIN_INTERFACES.getCode())
+                .executeTest();
     }
 
     @Test
@@ -57,8 +57,8 @@ public class ServiceProcessorTest {
         compileTestBuilder
                 .addSources("serviceprocessor/TestcaseMustImplementAnnotatedInterface.java")
                 .compilationShouldFail()
-                .expectedErrorMessages(ServiceProcessorMessages.ERROR_ANNOTATED_CLASS_MUST_IMPLEMENT_CONFIGURED_INTERFACES.getCode())
-                .testCompilation();
+                .expectErrorMessagesThatContain(ServiceProcessorMessages.ERROR_ANNOTATED_CLASS_MUST_IMPLEMENT_CONFIGURED_INTERFACES.getCode())
+                .executeTest();
     }
 
     @Test
@@ -66,7 +66,7 @@ public class ServiceProcessorTest {
         compileTestBuilder
                 .addSources("serviceprocessor/TestcaseValidUseWithPlainInterface.java")
                 .compilationShouldSucceed()
-                .testCompilation();
+                .executeTest();
     }
 
     @Test
@@ -74,7 +74,7 @@ public class ServiceProcessorTest {
         compileTestBuilder
                 .addSources("serviceprocessor/TestcaseMultipleServices.java")
                 .compilationShouldSucceed()
-                .testCompilation();
+                .executeTest();
     }
 
 
@@ -82,9 +82,9 @@ public class ServiceProcessorTest {
     public void test_OutOfServiceAnnotatedServicesShouldntBeProcessed() {
         compileTestBuilder
                 .addSources("serviceprocessor/TestcaseDontProcessOutOfServiceService.java")
-                .expectedNoteMessages(ServiceProcessorMessages.INFO_SKIP_ELEMENT_ANNOTATED_AS_OUT_OF_SERVICE.getCode())
+                .expectNoteMessagesThatContain(ServiceProcessorMessages.INFO_SKIP_ELEMENT_ANNOTATED_AS_OUT_OF_SERVICE.getCode())
                 .compilationShouldSucceed()
-                .testCompilation();
+                .executeTest();
 
     }
 

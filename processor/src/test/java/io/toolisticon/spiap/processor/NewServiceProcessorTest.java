@@ -41,14 +41,14 @@ public class NewServiceProcessorTest {
         compileTestBuilder
                 .addSources("serviceprocessor/TestcaseValidUsage.java")
                 .compilationShouldSucceed()
-                .expectedFileObjectExists(StandardLocation.SOURCE_OUTPUT, "META-INF.services", "io.toolisticon.spiap.processor.serviceprocessortest.TestSpi", JavaFileObjectUtils.readFromString("testcase", "io.toolisticon.spiap.processor.tests.TestcaseValidUsage\n"))
-                .expectedFileObjectExists(StandardLocation.SOURCE_OUTPUT, "META-INF.services", "io.toolisticon.spiap.processor.serviceprocessortest.TestSpi", new GeneratedFileObjectMatcher<FileObject>() {
+                .expectThatFileObjectExists(StandardLocation.SOURCE_OUTPUT, "META-INF.services", "io.toolisticon.spiap.processor.serviceprocessortest.TestSpi", JavaFileObjectUtils.readFromString("testcase", "io.toolisticon.spiap.processor.tests.TestcaseValidUsage\n"))
+                .expectThatFileObjectExists(StandardLocation.SOURCE_OUTPUT, "META-INF.services", "io.toolisticon.spiap.processor.serviceprocessortest.TestSpi", new GeneratedFileObjectMatcher<FileObject>() {
                     @Override
                     public boolean check(FileObject fileObject) throws IOException {
                         return fileObject.getCharContent(false).toString().contains("processor");
                     }
                 })
-                .testCompilation();
+                .executeTest();
     }
 
 
@@ -58,8 +58,8 @@ public class NewServiceProcessorTest {
         compileTestBuilder
                 .addSources("serviceprocessor/TestcaseUsageOnInterface.java")
                 .compilationShouldFail()
-                .expectedErrorMessages(ServiceProcessorMessages.ERROR_SPI_ANNOTATION_MUST_BE_PLACED_ON_CLASS.getCode())
-                .testCompilation();
+                .expectErrorMessagesThatContain(ServiceProcessorMessages.ERROR_SPI_ANNOTATION_MUST_BE_PLACED_ON_CLASS.getCode())
+                .executeTest();
     }
 
 
@@ -69,8 +69,8 @@ public class NewServiceProcessorTest {
         compileTestBuilder
                 .addSources("serviceprocessor/TestcaseValueAttributeMustOnlyContainInterfaces.java")
                 .compilationShouldFail()
-                .expectedErrorMessages(ServiceProcessorMessages.ERROR_VALUE_ATTRIBUTE_MUST_ONLY_CONTAIN_INTERFACES.getCode())
-                .testCompilation();
+                .expectErrorMessagesThatContain(ServiceProcessorMessages.ERROR_VALUE_ATTRIBUTE_MUST_ONLY_CONTAIN_INTERFACES.getCode())
+                .executeTest();
     }
 
 
@@ -80,8 +80,8 @@ public class NewServiceProcessorTest {
         compileTestBuilder
                 .addSources("serviceprocessor/TestcaseMustImplementAnnotatedInterface.java")
                 .compilationShouldFail()
-                .expectedErrorMessages(ServiceProcessorMessages.ERROR_ANNOTATED_CLASS_MUST_IMPLEMENT_CONFIGURED_INTERFACES.getCode())
-                .testCompilation();
+                .expectErrorMessagesThatContain(ServiceProcessorMessages.ERROR_ANNOTATED_CLASS_MUST_IMPLEMENT_CONFIGURED_INTERFACES.getCode())
+                .executeTest();
     }
 
 
@@ -91,7 +91,7 @@ public class NewServiceProcessorTest {
         compileTestBuilder
                 .addSources("serviceprocessor/TestcaseValidUseWithPlainInterface.java")
                 .compilationShouldSucceed()
-                .testCompilation();
+                .executeTest();
     }
 
 
@@ -101,7 +101,7 @@ public class NewServiceProcessorTest {
         compileTestBuilder
                 .addSources("serviceprocessor/TestcaseMultipleServices.java")
                 .compilationShouldSucceed()
-                .testCompilation();
+                .executeTest();
     }
 
 
@@ -110,9 +110,9 @@ public class NewServiceProcessorTest {
 
         compileTestBuilder
                 .addSources("serviceprocessor/TestcaseDontProcessOutOfServiceService.java")
-                .expectedNoteMessages(ServiceProcessorMessages.INFO_SKIP_ELEMENT_ANNOTATED_AS_OUT_OF_SERVICE.getCode())
+                .expectNoteMessagesThatContain(ServiceProcessorMessages.INFO_SKIP_ELEMENT_ANNOTATED_AS_OUT_OF_SERVICE.getCode())
                 .compilationShouldSucceed()
-                .testCompilation();
+                .executeTest();
     }
 
 

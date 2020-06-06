@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>example-service</artifactId>
@@ -24,13 +25,6 @@
             <artifactId>example-api</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>io.toolisticon.spiap</groupId>
-            <artifactId>spiap-processor</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-
     </dependencies>
 
 
@@ -40,29 +34,15 @@
 
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
-            </plugin>
-
-
-            <!-- Run annotation processors on src/main/java and src/test/java sources -->
-            <plugin>
-                <groupId>org.bsc.maven</groupId>
-                <artifactId>maven-processor-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>process</id>
-                        <goals>
-                            <goal>process</goal>
-                        </goals>
-                        <phase>generate-sources</phase>
-                    </execution>
-                    <execution>
-                        <id>process-test</id>
-                        <goals>
-                            <goal>process-test</goal>
-                        </goals>
-                        <phase>generate-test-sources</phase>
-                    </execution>
-                </executions>
+                <configuration combine.self="append">
+                    <annotationProcessorPaths>
+                        <path>
+                        <groupId>io.toolisticon.spiap</groupId>
+                        <artifactId>spiap-processor</artifactId>
+                        <version>${project.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
             </plugin>
 
             <plugin>
@@ -80,7 +60,7 @@
                             <resources>
                                 <resource>
                                     <directory>target/generated-sources/annotations</directory>
-                                    <targetPath />
+                                    <targetPath/>
                                 </resource>
                             </resources>
                         </configuration>

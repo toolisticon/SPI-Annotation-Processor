@@ -2,14 +2,8 @@ package io.toolisticon.spiap.processor;
 
 import io.toolisticon.annotationprocessortoolkit.tools.MessagerUtils;
 import io.toolisticon.compiletesting.CompileTestBuilder;
-import io.toolisticon.compiletesting.JavaFileObjectUtils;
-import io.toolisticon.compiletesting.UnitTestProcessor;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-
-import javax.annotation.processing.ProcessingEnvironment;
-import javax.lang.model.element.TypeElement;
 
 /**
  * Tests of {@link SpiProcessor}.
@@ -33,7 +27,7 @@ public class SpiServiceLocatorProcessorTest {
         compileTestBuilder
                 .addSources("spiprocessor/spiservicelocator/validusage/package-info.java")
                 .compilationShouldSucceed()
-                .testCompilation();
+                .executeTest();
 
     }
 
@@ -42,8 +36,8 @@ public class SpiServiceLocatorProcessorTest {
         compileTestBuilder
                 .addSources("spiprocessor/spiservicelocator/classAsValueAttribute/package-info.java")
                 .compilationShouldFail()
-                .expectedErrorMessages(SpiProcessorMessages.ERROR_SERVICE_LOCATOR_PASSED_SPI_CLASS_MUST_BE_AN_INTERFACE.getCode())
-                .testCompilation();
+                .expectErrorMessagesThatContain(SpiProcessorMessages.ERROR_SERVICE_LOCATOR_PASSED_SPI_CLASS_MUST_BE_AN_INTERFACE.getCode())
+                .executeTest();
     }
 
 }

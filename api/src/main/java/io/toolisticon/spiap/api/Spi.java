@@ -7,9 +7,16 @@ import java.lang.annotation.Target;
 
 /**
  * Marks an interface that should be used as an SPI.
- * This annotation will be used to create a SPI service locator.
+ * By default this annotation will trigger the creation of the SPI service locator.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(value = {ElementType.TYPE})
 public @interface Spi {
+
+    /**
+     * Should the service locator be generated?
+     * @return the configured value or true as a default value
+     */
+    boolean generateServiceLocator() default true;
+
 }

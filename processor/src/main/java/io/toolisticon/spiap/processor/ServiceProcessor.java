@@ -30,6 +30,9 @@ import java.util.Set;
 
 /**
  * Annotation Processor for {@link Service} and {@link Services}.
+ * Creates the service descriptor file in "/META-INF/services/fqnOfSpi".
+ * Additionally it creates a property file containing all additional metadata used by the ServiceLocator (like order, id and description)
+ * to get rid of the api library as run time dependency.
  */
 public class ServiceProcessor extends AbstractAnnotationProcessor {
 
@@ -140,7 +143,6 @@ public class ServiceProcessor extends AbstractAnnotationProcessor {
         if (!ElementUtils.CheckKindOfElement.isClass(annotatedElement)) {
             MessagerUtils.error(annotatedElement, ServiceProcessorMessages.ERROR_SPI_ANNOTATION_MUST_BE_PLACED_ON_CLASS);
             return;
-
         }
 
         // Now create the service locator

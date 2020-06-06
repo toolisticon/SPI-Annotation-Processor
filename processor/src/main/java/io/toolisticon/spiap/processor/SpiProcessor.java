@@ -57,13 +57,17 @@ public class SpiProcessor extends AbstractAnnotationProcessor {
             }
 
 
-            // Now create the service locator
-            TypeElement typeElement = ElementUtils.CastElement.castInterface(element);
-            PackageElement packageElement = (PackageElement) ElementUtils.AccessEnclosingElements.getFirstEnclosingElementOfKind(typeElement, ElementKind.PACKAGE);
+            // Generate service locator depending on settings configured in Spi annotation
+            Spi spiAnnotation = element.getAnnotation(Spi.class);
+            if (spiAnnotation.generateServiceLocator()) {
 
+                // Now create the service locator
+                TypeElement typeElement = ElementUtils.CastElement.castInterface(element);
+                PackageElement packageElement = (PackageElement) ElementUtils.AccessEnclosingElements.getFirstEnclosingElementOfKind(typeElement, ElementKind.PACKAGE);
 
-            // generate service locator
-            generateServiceLocator(element, packageElement, typeElement);
+                // generate service locator
+                generateServiceLocator(element, packageElement, typeElement);
+            }
 
         }
 
@@ -75,7 +79,6 @@ public class SpiProcessor extends AbstractAnnotationProcessor {
         for (Element element : roundEnv.getElementsAnnotatedWith(SpiServiceLocator.class)) {
 
             MessagerUtils.info(element, "Process : " + element.getSimpleName() + " annotated with SpiServiceLocator annotation");
-
 
             // get type from annotation
             TypeMirror typeMirror = AnnotationUtils.getClassAttributeFromAnnotationAsTypeMirror(element, SpiServiceLocator.class);
