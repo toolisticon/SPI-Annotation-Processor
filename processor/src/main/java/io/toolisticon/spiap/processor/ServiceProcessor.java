@@ -209,7 +209,7 @@ public class ServiceProcessor extends AbstractAnnotationProcessor {
         try {
 
             // write service provider file by using a template
-            SimpleResourceWriter propertiesFileObjectWriter = FilerUtils.createResource(StandardLocation.SOURCE_OUTPUT, "", fileName);
+            SimpleResourceWriter propertiesFileObjectWriter = FilerUtils.createResource(StandardLocation.CLASS_OUTPUT, "", fileName);
 
             // get id
             String id = AnnotationValueUtils.getStringValue(AnnotationUtils.getAnnotationValueOfAttributeWithDefaults(annotationMirror, "id"));
@@ -262,7 +262,7 @@ public class ServiceProcessor extends AbstractAnnotationProcessor {
             try {
 
                 // write service provider file by using a template
-                SimpleResourceWriter writer = FilerUtils.createResource(StandardLocation.SOURCE_OUTPUT, "", serviceProviderFile);
+                SimpleResourceWriter writer = FilerUtils.createResource(StandardLocation.CLASS_OUTPUT, "", serviceProviderFile);
 
                 Map<String, Object> model = new HashMap<String, Object>();
                 model.put("fqns", allServiceImplementations);
@@ -272,7 +272,7 @@ public class ServiceProcessor extends AbstractAnnotationProcessor {
 
                 /*-
                 // Alternative approach by using the Filer utility class
-                BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(getFiler().createResource(StandardLocation.SOURCE_OUTPUT, "", serviceProviderFile).openOutputStream()));
+                BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(getFiler().createResource(StandardLocation.CLASS_OUTPUT, "", serviceProviderFile).openOutputStream()));
 
                 for (String value : allServiceImplementations) {
                     bw.write(value);
@@ -310,7 +310,7 @@ public class ServiceProcessor extends AbstractAnnotationProcessor {
 
         try {
 
-            resultSet.addAll(FilerUtils.getResource(StandardLocation.SOURCE_OUTPUT, "",
+            resultSet.addAll(FilerUtils.getResource(StandardLocation.CLASS_OUTPUT, "",
                     serviceProviderFile).readAsLines(true));
 
 

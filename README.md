@@ -44,31 +44,6 @@ The annotation processor should be applied by defining it in annotation processo
        </configuration>
     </plugin>
 
-The annotation processor then will create the configuration into the StandardLocation.SOURCE_OUTPUT folder.
-You need to use the following build-helper-maven-plugin configuration to include the generated resource files into your jar:
-
-    <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <version>1.9.1</version>
-        <executions>
-            <execution>
-                <id>add-resource</id>
-                <phase>generate-resources</phase>
-                <goals>
-                    <goal>add-resource</goal>
-                </goals>
-                <configuration>
-                    <resources>
-                        <resource>
-                            <directory>target/generated-sources/annotations</directory>
-                            <targetPath />
-                        </resource>
-                    </resources>
-                </configuration>
-            </execution>
-        </executions>
-    </plugin>
 
 ## How to generate the service locator class
 ### By annotating the service provider interface
