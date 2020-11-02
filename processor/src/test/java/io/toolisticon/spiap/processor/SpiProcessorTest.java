@@ -1,7 +1,7 @@
 package io.toolisticon.spiap.processor;
 
 import io.toolisticon.annotationprocessortoolkit.tools.MessagerUtils;
-import io.toolisticon.compiletesting.CompileTestBuilder;
+import io.toolisticon.cute.CompileTestBuilder;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -44,17 +44,17 @@ public class SpiProcessorTest {
         compileTestBuilder
                 .addSources("/spiprocessor/spi/TestcaseAnnotationOnClass.java")
                 .compilationShouldFail()
-                .expectErrorMessagesThatContain(SpiProcessorMessages.ERROR_SPI_ANNOTATION_MUST_BE_PLACED_ON_INTERFACE.getCode())
+                .expectErrorMessageThatContains(SpiProcessorMessages.ERROR_SPI_ANNOTATION_MUST_BE_PLACED_ON_INTERFACE.getCode())
                 .executeTest();
 
     }
 
     @Test
-    public void test_shouldNotGenerateServiceLocator(){
+    public void test_shouldNotGenerateServiceLocator() {
         compileTestBuilder
                 .addSources("/spiprocessor/spi/TestcaseGenerateNoServiceLocator.java")
                 .compilationShouldSucceed()
-                .expectThatJavaFileObjectNotExist(StandardLocation.SOURCE_OUTPUT,"io.toolisticon.spiap.processor.tests.TestcaseGenerateNoServiceLocatorServiceLocator", JavaFileObject.Kind.SOURCE)
+                .expectThatGeneratedSourceFileDoesntExist("io.toolisticon.spiap.processor.tests.TestcaseGenerateNoServiceLocatorServiceLocator")
                 .executeTest();
     }
 

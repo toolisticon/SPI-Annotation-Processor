@@ -2,9 +2,10 @@ package io.toolisticon.spiap.processor;
 
 
 import io.toolisticon.annotationprocessortoolkit.tools.MessagerUtils;
-import io.toolisticon.compiletesting.CompileTestBuilder;
-import io.toolisticon.compiletesting.GeneratedFileObjectMatcher;
-import io.toolisticon.compiletesting.JavaFileObjectUtils;
+import io.toolisticon.cute.CompileTestBuilder;
+import io.toolisticon.cute.GeneratedFileObjectMatcher;
+import io.toolisticon.cute.JavaFileObjectUtils;
+import io.toolisticon.cute.CompileTestBuilder;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -58,7 +59,7 @@ public class NewServiceProcessorTest {
         compileTestBuilder
                 .addSources("serviceprocessor/TestcaseUsageOnInterface.java")
                 .compilationShouldFail()
-                .expectErrorMessagesThatContain(ServiceProcessorMessages.ERROR_SPI_ANNOTATION_MUST_BE_PLACED_ON_CLASS.getCode())
+                .expectErrorMessageThatContains(ServiceProcessorMessages.ERROR_SPI_ANNOTATION_MUST_BE_PLACED_ON_CLASS.getCode())
                 .executeTest();
     }
 
@@ -69,7 +70,7 @@ public class NewServiceProcessorTest {
         compileTestBuilder
                 .addSources("serviceprocessor/TestcaseValueAttributeMustOnlyContainInterfaces.java")
                 .compilationShouldFail()
-                .expectErrorMessagesThatContain(ServiceProcessorMessages.ERROR_VALUE_ATTRIBUTE_MUST_ONLY_CONTAIN_INTERFACES.getCode())
+                .expectErrorMessageThatContains(ServiceProcessorMessages.ERROR_VALUE_ATTRIBUTE_MUST_ONLY_CONTAIN_INTERFACES.getCode())
                 .executeTest();
     }
 
@@ -80,7 +81,7 @@ public class NewServiceProcessorTest {
         compileTestBuilder
                 .addSources("serviceprocessor/TestcaseMustImplementAnnotatedInterface.java")
                 .compilationShouldFail()
-                .expectErrorMessagesThatContain(ServiceProcessorMessages.ERROR_ANNOTATED_CLASS_MUST_IMPLEMENT_CONFIGURED_INTERFACES.getCode())
+                .expectErrorMessageThatContains(ServiceProcessorMessages.ERROR_ANNOTATED_CLASS_MUST_IMPLEMENT_CONFIGURED_INTERFACES.getCode())
                 .executeTest();
     }
 
@@ -110,7 +111,7 @@ public class NewServiceProcessorTest {
 
         compileTestBuilder
                 .addSources("serviceprocessor/TestcaseDontProcessOutOfServiceService.java")
-                .expectNoteMessagesThatContain(ServiceProcessorMessages.INFO_SKIP_ELEMENT_ANNOTATED_AS_OUT_OF_SERVICE.getCode())
+                .expectNoteMessageThatContains(ServiceProcessorMessages.INFO_SKIP_ELEMENT_ANNOTATED_AS_OUT_OF_SERVICE.getCode())
                 .compilationShouldSucceed()
                 .executeTest();
     }

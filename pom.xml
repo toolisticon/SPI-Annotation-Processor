@@ -82,8 +82,8 @@
         <java.compile.target.version>1.7</java.compile.target.version>
 
 
-        <compile-testing.version>0.8.0</compile-testing.version>
-        <annotationProcessorToolkit.version>0.14.0</annotationProcessorToolkit.version>
+        <cute.version>0.9.0</cute.version>
+        <annotationProcessorToolkit.version>0.14.4</annotationProcessorToolkit.version>
 
         <!-- versions of test dependencies -->
         <junit.version>4.12</junit.version>
@@ -351,16 +351,6 @@
 
     <dependencies>
 
-        <!-- compile support of lombok -->
-        <!--
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>${lombok.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
--->
         <!-- Test dependencies -->
         <dependency>
             <groupId>junit</groupId>
@@ -390,9 +380,9 @@
 
             <!-- internal -->
             <dependency>
-                <groupId>io.toolisticon.compiletesting</groupId>
-                <artifactId>compiletesting</artifactId>
-                <version>${compile-testing.version}</version>
+                <groupId>io.toolisticon.cute</groupId>
+                <artifactId>cute</artifactId>
+                <version>${cute.version}</version>
                 <scope>test</scope>
             </dependency>
 
