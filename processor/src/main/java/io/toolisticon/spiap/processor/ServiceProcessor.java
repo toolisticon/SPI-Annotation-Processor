@@ -1,21 +1,18 @@
 package io.toolisticon.spiap.processor;
 
-import io.toolisticon.annotationprocessortoolkit.AbstractAnnotationProcessor;
-import io.toolisticon.annotationprocessortoolkit.tools.AnnotationUtils;
-import io.toolisticon.annotationprocessortoolkit.tools.AnnotationValueUtils;
-import io.toolisticon.annotationprocessortoolkit.tools.ElementUtils;
-import io.toolisticon.annotationprocessortoolkit.tools.FilerUtils;
-import io.toolisticon.annotationprocessortoolkit.tools.MessagerUtils;
-import io.toolisticon.annotationprocessortoolkit.tools.ProcessingEnvironmentUtils;
-import io.toolisticon.annotationprocessortoolkit.tools.TypeUtils;
-import io.toolisticon.annotationprocessortoolkit.tools.generators.SimpleResourceWriter;
+import io.toolisticon.aptk.tools.AbstractAnnotationProcessor;
+import io.toolisticon.aptk.tools.AnnotationUtils;
+import io.toolisticon.aptk.tools.ElementUtils;
+import io.toolisticon.aptk.tools.FilerUtils;
+import io.toolisticon.aptk.tools.MessagerUtils;
+import io.toolisticon.aptk.tools.ProcessingEnvironmentUtils;
+import io.toolisticon.aptk.tools.TypeUtils;
+import io.toolisticon.aptk.tools.generators.SimpleResourceWriter;
 import io.toolisticon.spiap.api.OutOfService;
 import io.toolisticon.spiap.api.Service;
 import io.toolisticon.spiap.api.Services;
 
 import javax.annotation.processing.RoundEnvironment;
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
@@ -95,15 +92,11 @@ public class ServiceProcessor extends AbstractAnnotationProcessor {
                 continue;
             }
 
-            // get annotation mirror of Services annotation
-            AnnotationMirror servicesAnnotationMirror = AnnotationUtils.getAnnotationMirror(element, Services.class);
+            // read annotation
+            ServicesWrapper servicesAnnotationWrapper = ServicesWrapper.wrapAnnotationOfElement(element);
 
-            // get Service AnnotationMirrors of Services annotation
-            AnnotationValue annotationValue = AnnotationUtils.getAnnotationValueOfAttribute(servicesAnnotationMirror);
-            AnnotationMirror[] serviceAnnotationMirrors = AnnotationValueUtils.getAnnotationValueArray(annotationValue);
-
-            for (AnnotationMirror serviceAnnotationMirror : serviceAnnotationMirrors) {
-                processAnnotation(serviceAnnotationMirror, element);
+            for (ServiceWrapper serviceWrapper : servicesAnnotationWrapper.value()) {
+                processAnnotation(serviceWrapper, element);
             }
 
 
@@ -118,9 +111,10 @@ public class ServiceProcessor extends AbstractAnnotationProcessor {
                 continue;
             }
 
-            AnnotationMirror serviceAnnotationMirror = AnnotationUtils.getAnnotationMirror(element, Service.class);
+            // read annotation
+            ServiceWrapper serviceAnnotationWrapper = ServiceWrapper.wrapAnnotationOfElement(element);
 
-            processAnnotation(serviceAnnotationMirror, element);
+            processAnnotation(serviceAnnotationWrapper, element);
 
         }
 
@@ -137,7 +131,7 @@ public class ServiceProcessor extends AbstractAnnotationProcessor {
         return false;
     }
 
-    private void processAnnotation(AnnotationMirror serviceAnnotation, Element annotatedElement) {
+    private void processAnnotation(ServiceWrapper serviceAnnotationWrapper, Element annotatedElement) {
 
         // check if it is placed on Class
         if (!ElementUtils.CheckKindOfElement.isClass(annotatedElement)) {
@@ -149,19 +143,15 @@ public class ServiceProcessor extends AbstractAnnotationProcessor {
 
         TypeElement typeElement = ElementUtils.CastElement.castClass(annotatedElement);
 
-
-        if (serviceAnnotation != null) {
-
+        if (serviceAnnotationWrapper != null) {
 
             Set<String> spiInterfaces = new HashSet<String>();
-            String spiAttributeTypes = AnnotationValueUtils.getTypeMirrorValue(AnnotationUtils.getAnnotationValueOfAttribute(serviceAnnotation)).toString();
+            String spiAttributeTypes = serviceAnnotationWrapper.valueAsFqn();
             if (spiAttributeTypes != null) {
                 spiInterfaces.add(spiAttributeTypes);
             }
 
-
             for (String fqTypeName : spiInterfaces) {
-
 
                 TypeMirror typeMirror = TypeUtils.TypeRetrieval.getTypeMirror(fqTypeName);
                 TypeElement typeMirrorTypeElement = (TypeElement) ProcessingEnvironmentUtils.getTypes().asElement(typeMirror);
@@ -181,7 +171,7 @@ public class ServiceProcessor extends AbstractAnnotationProcessor {
                 }
 
                 // Add configuration property file
-                writePropertiesFile(typeElement, serviceAnnotation);
+                writePropertiesFile(typeElement, serviceAnnotationWrapper);
 
                 // put service provider implementations in map by using the SPI fqn as key
                 serviceImplHashMap.put(fqTypeName, typeElement.getQualifiedName().toString());
@@ -197,12 +187,13 @@ public class ServiceProcessor extends AbstractAnnotationProcessor {
      * This allows us not to get rid of spiap-api dependency at runtime.
      *
      * @param annotatedTypeElement the annotated element
-     * @param annotationMirror     The Service annotations AnotationMirror
+     * @param serviceAnnotationWrapper     The Service annotations AnotationMirror
      */
-    private void writePropertiesFile(TypeElement annotatedTypeElement, AnnotationMirror annotationMirror) {
+    private void writePropertiesFile(TypeElement annotatedTypeElement, ServiceWrapper serviceAnnotationWrapper) {
 
 
-        String spiClassName = AnnotationValueUtils.getClassValue(AnnotationUtils.getAnnotationValueOfAttribute(annotationMirror)).toString();
+        String spiClassName = serviceAnnotationWrapper.valueAsFqn();
+        ;
         String serviceClassName = annotatedTypeElement.getQualifiedName().toString();
         String fileName = "META-INF/spiap/" + spiClassName + "/" + serviceClassName + ".properties";
 
@@ -211,16 +202,13 @@ public class ServiceProcessor extends AbstractAnnotationProcessor {
             // write service provider file by using a template
             SimpleResourceWriter propertiesFileObjectWriter = FilerUtils.createResource(StandardLocation.CLASS_OUTPUT, "", fileName);
 
-            // get id
-            String id = AnnotationValueUtils.getStringValue(AnnotationUtils.getAnnotationValueOfAttributeWithDefaults(annotationMirror, "id"));
-
             // Get properties
             Properties properties = new Properties();
 
             // default to fqn of service if id is empty
-            properties.setProperty(Constants.PROPERTY_KEY_ID, !id.isEmpty() ? id : serviceClassName);
-            properties.setProperty(Constants.PROPERTY_KEY_DESCRIPTION, AnnotationValueUtils.getStringValue(AnnotationUtils.getAnnotationValueOfAttributeWithDefaults(annotationMirror, "description")));
-            properties.setProperty(Constants.PROPERTY_KEY_PRIORITY, "" + AnnotationValueUtils.getIntegerValue(AnnotationUtils.getAnnotationValueOfAttributeWithDefaults(annotationMirror, "priority")));
+            properties.setProperty(Constants.PROPERTY_KEY_ID, !serviceAnnotationWrapper.id().isEmpty() ? serviceAnnotationWrapper.id() : serviceClassName);
+            properties.setProperty(Constants.PROPERTY_KEY_DESCRIPTION, serviceAnnotationWrapper.description());
+            properties.setProperty(Constants.PROPERTY_KEY_PRIORITY, "" + serviceAnnotationWrapper.priority());
             properties.setProperty(Constants.PROPERTY_KEY_OUT_OF_SERVICE, "" + (AnnotationUtils.getAnnotationMirror(annotatedTypeElement, OutOfService.class) != null));
 
             StringWriter writer = new StringWriter();
