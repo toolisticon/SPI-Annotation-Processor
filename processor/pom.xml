@@ -17,8 +17,8 @@
 
 
         <dependency>
-            <groupId>io.toolisticon.annotationprocessortoolkit</groupId>
-            <artifactId>annotationprocessor</artifactId>
+            <groupId>io.toolisticon.aptk</groupId>
+            <artifactId>tools</artifactId>
         </dependency>
 
         <dependency>
@@ -26,6 +26,10 @@
             <artifactId>spiap-api</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>io.toolisticon.aptk</groupId>
+            <artifactId>annotationwrapper-api</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>io.toolisticon.cute</groupId>
@@ -52,12 +56,16 @@
                         </goals>
 
 
+
                         <configuration>
 
+                            <!-- remove shaded dependenies from pom.xml -->
+                            <createDependencyReducedPom>true</createDependencyReducedPom>
+
+                            <!-- exclude api -->
                             <artifactSet>
                                 <excludes>
                                     <exclude>io.toolisticon.spiap:spiap-api</exclude>
-
                                 </excludes>
                             </artifactSet>
 
@@ -69,9 +77,9 @@
 
                             <relocations>
                                 <relocation>
-                                    <pattern>io.toolisticon.annotationprocessortoolkit</pattern>
+                                    <pattern>io.toolisticon.aptk</pattern>
                                     <shadedPattern>
-                                        io.toolisticon.spiap.processor._3rdparty.io.toolisticon.annotationprocessortoolkit
+                                        io.toolisticon.spiap.processor._3rdparty.io.toolisticon.aptk
                                     </shadedPattern>
                                 </relocation>
 
@@ -87,7 +95,13 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration combine.self="append">
                     <verbose>true</verbose>
-                    <proc>none</proc>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>io.toolisticon.aptk</groupId>
+                            <artifactId>annotationwrapper-processor</artifactId>
+                            <version>${aptk.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
 

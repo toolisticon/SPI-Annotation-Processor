@@ -1,6 +1,6 @@
 package io.toolisticon.spiap.processor;
 
-import io.toolisticon.annotationprocessortoolkit.tools.MessagerUtils;
+import io.toolisticon.aptk.tools.MessagerUtils;
 import io.toolisticon.cute.CompileTestBuilder;
 import org.junit.Before;
 import org.junit.Test;

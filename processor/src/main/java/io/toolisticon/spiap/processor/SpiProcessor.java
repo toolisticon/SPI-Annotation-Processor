@@ -1,12 +1,10 @@
 package io.toolisticon.spiap.processor;
 
-import io.toolisticon.annotationprocessortoolkit.AbstractAnnotationProcessor;
-import io.toolisticon.annotationprocessortoolkit.tools.AnnotationUtils;
-import io.toolisticon.annotationprocessortoolkit.tools.ElementUtils;
-import io.toolisticon.annotationprocessortoolkit.tools.FilerUtils;
-import io.toolisticon.annotationprocessortoolkit.tools.MessagerUtils;
-import io.toolisticon.annotationprocessortoolkit.tools.ProcessingEnvironmentUtils;
-import io.toolisticon.annotationprocessortoolkit.tools.generators.SimpleJavaWriter;
+import io.toolisticon.aptk.tools.AbstractAnnotationProcessor;
+import io.toolisticon.aptk.tools.ElementUtils;
+import io.toolisticon.aptk.tools.FilerUtils;
+import io.toolisticon.aptk.tools.MessagerUtils;
+import io.toolisticon.aptk.tools.generators.SimpleJavaWriter;
 import io.toolisticon.spiap.api.Spi;
 import io.toolisticon.spiap.api.SpiServiceLocator;
 
@@ -58,7 +56,7 @@ public class SpiProcessor extends AbstractAnnotationProcessor {
 
 
             // Generate service locator depending on settings configured in Spi annotation
-            Spi spiAnnotation = element.getAnnotation(Spi.class);
+            SpiWrapper spiAnnotation = SpiWrapper.wrapAnnotationOfElement(element);
             if (spiAnnotation.generateServiceLocator()) {
 
                 // Now create the service locator
@@ -81,13 +79,14 @@ public class SpiProcessor extends AbstractAnnotationProcessor {
             MessagerUtils.info(element, "Process : " + element.getSimpleName() + " annotated with SpiServiceLocator annotation");
 
             // get type from annotation
-            TypeMirror typeMirror = AnnotationUtils.getClassAttributeFromAnnotationAsTypeMirror(element, SpiServiceLocator.class);
+            SpiServiceLocatorWrapper annotationWrapper =  SpiServiceLocatorWrapper.wrapAnnotationOfElement(element);
+            TypeMirror typeMirror = annotationWrapper.valueAsTypeMirror();
             if (typeMirror == null) {
                 MessagerUtils.error(element, "Couldn't get type from annotations attributes");
                 continue;
             }
 
-            Element serviceLocatorInterfaceElement = ProcessingEnvironmentUtils.getTypes().asElement(typeMirror);
+            TypeElement serviceLocatorInterfaceElement = annotationWrapper.valueAsTypeMirrorWrapper().getTypeElement();
 
             // check if it is place on interface
             if (!ElementUtils.CheckKindOfElement.isInterface(serviceLocatorInterfaceElement)) {
