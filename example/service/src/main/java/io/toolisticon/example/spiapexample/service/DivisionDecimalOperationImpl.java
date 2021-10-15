@@ -6,7 +6,7 @@ import io.toolisticon.spiap.api.Service;
 
 /**
  * Implements the division decimal operation.
- * <p/>
+ * 
  * It's ok not to set the id. The full qualified class name will be used as fallback value for id.
  */
 @Service(DecimalCalculationOperation.class)

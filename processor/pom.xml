@@ -56,7 +56,6 @@
                         </goals>
 
 
-
                         <configuration>
 
                             <!-- remove shaded dependenies from pom.xml -->
@@ -89,6 +88,19 @@
 
                     </execution>
                 </executions>
+            </plugin>
+
+            <!-- needed to fix build due to generated classes in api -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${maven-javadoc-plugin.version}</version>
+                <configuration>
+                    <show>private</show>
+                    <sourcepath>
+                        ${project.basedir}/target/generated-sources/annotations;${project.basedir}/src/main/java
+                    </sourcepath>
+                </configuration>
             </plugin>
 
             <plugin>
