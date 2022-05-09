@@ -7,13 +7,13 @@ import io.toolisticon.aptk.tools.MessagerUtils;
 import io.toolisticon.aptk.tools.generators.SimpleJavaWriter;
 import io.toolisticon.spiap.api.Spi;
 import io.toolisticon.spiap.api.SpiServiceLocator;
+import io.toolisticon.spiap.api.SpiServiceLocators;
 
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.type.TypeMirror;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,7 +24,8 @@ import java.util.Set;
  */
 public class SpiProcessor extends AbstractAnnotationProcessor {
 
-    private final static Set<String> SUPPORTED_ANNOTATIONS = createSupportedAnnotationSet(Spi.class, SpiServiceLocator.class);
+    private final static Set<String> SUPPORTED_ANNOTATIONS =
+        createSupportedAnnotationSet(Spi.class, SpiServiceLocator.class, SpiServiceLocators.class);
 
 
     @Override
@@ -36,7 +37,7 @@ public class SpiProcessor extends AbstractAnnotationProcessor {
     public boolean processAnnotations(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
 
         handleSpiAnnotation(roundEnv);
-        handeSpiServiceLocatorAnnotation(roundEnv);
+        handleSpiServiceLocatorAnnotation(roundEnv);
 
         return false;
     }
@@ -57,11 +58,11 @@ public class SpiProcessor extends AbstractAnnotationProcessor {
 
             // Generate service locator depending on settings configured in Spi annotation
             SpiWrapper spiAnnotation = SpiWrapper.wrapAnnotationOfElement(element);
-            if (spiAnnotation.generateServiceLocator()) {
+            if (spiAnnotation != null && spiAnnotation.generateServiceLocator()) {
 
                 // Now create the service locator
                 TypeElement typeElement = ElementUtils.CastElement.castInterface(element);
-                PackageElement packageElement = (PackageElement) ElementUtils.AccessEnclosingElements.getFirstEnclosingElementOfKind(typeElement, ElementKind.PACKAGE);
+                PackageElement packageElement = ElementUtils.AccessEnclosingElements.getFirstEnclosingElementOfKind(typeElement, ElementKind.PACKAGE);
 
                 // generate service locator
                 generateServiceLocator(element, packageElement, typeElement);
@@ -71,42 +72,65 @@ public class SpiProcessor extends AbstractAnnotationProcessor {
 
     }
 
-    private void handeSpiServiceLocatorAnnotation(RoundEnvironment roundEnv) {
+    private void handleSpiServiceLocatorAnnotation(RoundEnvironment roundEnv) {
 
-        // handle Spi annotation
+        // handle SpiServiceLocator annotation
         for (Element element : roundEnv.getElementsAnnotatedWith(SpiServiceLocator.class)) {
 
             MessagerUtils.info(element, "Process : " + element.getSimpleName() + " annotated with SpiServiceLocator annotation");
 
             // get type from annotation
-            SpiServiceLocatorWrapper annotationWrapper =  SpiServiceLocatorWrapper.wrapAnnotationOfElement(element);
-            TypeMirror typeMirror = annotationWrapper.valueAsTypeMirror();
-            if (typeMirror == null) {
-                MessagerUtils.error(element, "Couldn't get type from annotations attributes");
+            SpiServiceLocatorWrapper spiWrapper =  SpiServiceLocatorWrapper.wrapAnnotationOfElement(element);
+            handleSpiServiceLocationWrapper(spiWrapper, element);
+
+        }
+
+        // handle SpiServiceLocator annotation
+        for (Element element : roundEnv.getElementsAnnotatedWith(SpiServiceLocators.class)) {
+
+            MessagerUtils.info(element, "Process : " + element.getSimpleName() + " annotated with SpiServiceLocator annotation");
+
+            // get type from annotation
+            SpiServiceLocatorsWrapper annotationWrapper = SpiServiceLocatorsWrapper.wrapAnnotationOfElement(element);
+            if (annotationWrapper == null) {
                 continue;
             }
 
-            TypeElement serviceLocatorInterfaceElement = annotationWrapper.valueAsTypeMirrorWrapper().getTypeElement();
-
-            // check if it is place on interface
-            if (!ElementUtils.CheckKindOfElement.isInterface(serviceLocatorInterfaceElement)) {
-                MessagerUtils.error(element, SpiProcessorMessages.ERROR_SERVICE_LOCATOR_PASSED_SPI_CLASS_MUST_BE_AN_INTERFACE);
-                continue;
+            for (SpiServiceLocatorWrapper spiWrapper : annotationWrapper.value()) {
+                handleSpiServiceLocationWrapper(spiWrapper, element);
             }
-
-
-            // Now create the service locator
-            TypeElement typeElement = ElementUtils.CastElement.castInterface(serviceLocatorInterfaceElement);
-            PackageElement packageElement = (PackageElement) element;
-
-
-            // generate service locator
-            generateServiceLocator(element, packageElement, typeElement);
 
         }
 
     }
 
+    private void handleSpiServiceLocationWrapper(
+        final SpiServiceLocatorWrapper annotationWrapper, final Element element) {
+
+        if (annotationWrapper == null || annotationWrapper.valueAsTypeMirror() == null) {
+            MessagerUtils.error(element, "Couldn't get type from annotations attributes");
+            return;
+        }
+
+        System.out.println("Handling : " + annotationWrapper.valueAsFqn());
+
+        TypeElement serviceLocatorInterfaceElement = annotationWrapper.valueAsTypeMirrorWrapper().getTypeElement();
+
+        // check if it is place on interface
+        if (!ElementUtils.CheckKindOfElement.isInterface(serviceLocatorInterfaceElement)) {
+            MessagerUtils.error(element, SpiProcessorMessages.ERROR_SERVICE_LOCATOR_PASSED_SPI_CLASS_MUST_BE_AN_INTERFACE);
+            return;
+        }
+
+
+        // Now create the service locator
+        TypeElement typeElement = ElementUtils.CastElement.castInterface(serviceLocatorInterfaceElement);
+        PackageElement packageElement = (PackageElement) element;
+
+
+        // generate service locator
+        generateServiceLocator(element, packageElement, typeElement);
+    }
 
     private void generateServiceLocator(Element annotatedElement, PackageElement packageElement, TypeElement typeElement) {
 

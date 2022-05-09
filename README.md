@@ -70,6 +70,17 @@ Then add the SpiServiceLocator annotation in it:
 
 The locator will be created in the annotated package. It is named like the SPI suffixed with ServiceLocator (ExampleSpiInterfaceServiceLocator in this example)
 
+To create multiple service locators in the same package use @SpiServiceLocators:
+
+
+    @SpiServiceLocators({
+        @SpiServiceLocator(FirstExampleSpiInterface.class),
+        @SpiServiceLocator(SecondExampleSpiInterface.class),
+    })
+    package your.target.package;
+
+    import io.toolisticon.spiap.api.SpiServiceLocator;
+    import your.spi.package.ExampleSpiInterface;
 
 ## How to register a service implementation
 Just add a Service annotation to your service implementation:
