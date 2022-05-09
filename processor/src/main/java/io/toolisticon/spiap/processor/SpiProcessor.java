@@ -112,8 +112,6 @@ public class SpiProcessor extends AbstractAnnotationProcessor {
             return;
         }
 
-        System.out.println("Handling : " + annotationWrapper.valueAsFqn());
-
         TypeElement serviceLocatorInterfaceElement = annotationWrapper.valueAsTypeMirrorWrapper().getTypeElement();
 
         // check if it is place on interface
