@@ -4,7 +4,7 @@
 
     <groupId>io.toolisticon.spiap</groupId>
     <artifactId>spiap-parent</artifactId>
-    <version>0.8.2</version>
+    <version>0.8.3-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>spiap-parent</name>
