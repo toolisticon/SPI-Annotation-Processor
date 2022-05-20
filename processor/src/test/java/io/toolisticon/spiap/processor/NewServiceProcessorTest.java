@@ -3,15 +3,11 @@ package io.toolisticon.spiap.processor;
 
 import io.toolisticon.aptk.tools.MessagerUtils;
 import io.toolisticon.cute.CompileTestBuilder;
-import io.toolisticon.cute.GeneratedFileObjectMatcher;
 import io.toolisticon.cute.JavaFileObjectUtils;
-import io.toolisticon.cute.CompileTestBuilder;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.tools.FileObject;
 import javax.tools.StandardLocation;
-import java.io.IOException;
 
 
 /**
@@ -43,12 +39,7 @@ public class NewServiceProcessorTest {
                 .addSources("serviceprocessor/TestcaseValidUsage.java")
                 .compilationShouldSucceed()
                 .expectThatFileObjectExists(StandardLocation.CLASS_OUTPUT, "META-INF.services", "io.toolisticon.spiap.processor.serviceprocessortest.TestSpi", JavaFileObjectUtils.readFromString("testcase", "io.toolisticon.spiap.processor.tests.TestcaseValidUsage\n"))
-                .expectThatFileObjectExists(StandardLocation.CLASS_OUTPUT, "META-INF.services", "io.toolisticon.spiap.processor.serviceprocessortest.TestSpi", new GeneratedFileObjectMatcher<FileObject>() {
-                    @Override
-                    public boolean check(FileObject fileObject) throws IOException {
-                        return fileObject.getCharContent(false).toString().contains("processor");
-                    }
-                })
+                .expectThatFileObjectExists(StandardLocation.CLASS_OUTPUT, "META-INF.services", "io.toolisticon.spiap.processor.serviceprocessortest.TestSpi", fileObject -> fileObject.getCharContent(false).toString().contains("processor"))
                 .executeTest();
     }
 

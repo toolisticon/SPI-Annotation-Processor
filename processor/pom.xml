@@ -8,7 +8,7 @@
     <parent>
         <groupId>io.toolisticon.spiap</groupId>
         <artifactId>spiap-parent</artifactId>
-        <version>0.8.2</version>
+        <version>0.9.0</version>
     </parent>
 
     <name>spiap-processor</name>
@@ -18,7 +18,7 @@
 
         <dependency>
             <groupId>io.toolisticon.aptk</groupId>
-            <artifactId>tools</artifactId>
+            <artifactId>aptk-tools</artifactId>
         </dependency>
 
         <dependency>
@@ -28,7 +28,7 @@
 
         <dependency>
             <groupId>io.toolisticon.aptk</groupId>
-            <artifactId>annotationwrapper-api</artifactId>
+            <artifactId>aptk-annotationwrapper-api</artifactId>
         </dependency>
 
         <dependency>
@@ -110,7 +110,7 @@
                     <annotationProcessorPaths>
                         <path>
                             <groupId>io.toolisticon.aptk</groupId>
-                            <artifactId>annotationwrapper-processor</artifactId>
+                            <artifactId>aptk-annotationwrapper-processor</artifactId>
                             <version>${aptk.version}</version>
                         </path>
                     </annotationProcessorPaths>

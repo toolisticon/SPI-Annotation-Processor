@@ -7,15 +7,19 @@
 # Why you should use this project?
 
 If you want to use a service provider interface (_SPI_) you need to register your service implementation in the _/META-INF/services/&lt;Full qualified spi interface name&gt;_ file.
-Additionally you usually need to write a service locator to be able to use the service implementation.
+Additionally, you usually need to write a service locator to be able to use the service implementation.
 
 The annotation processor offered by this project provides exactly this. It allows you to create the service locator file just by adding an annotation to you spi implementation.
-Additionally it will generate a service locator for you.  
+Additionally, it will generate a service locator for you.
+
+# Prerequisites
+- The generated ServiceLocator code requires at least JDK 8.
 
 # Features
 Annotation processor that
 - provides support for generating service locator file in _/META-INF/services/&lt;Full qualified spi interface name&gt;_
 - provides support for generating service locator class for accessing the SPI implementations
+- compatible with Java >= 8 (Java 7 support up to version 0.8.2)
 
 # How does it work?
 
@@ -75,12 +79,13 @@ To create multiple service locators in the same package use @SpiServiceLocators:
 
     @SpiServiceLocators({
         @SpiServiceLocator(FirstExampleSpiInterface.class),
-        @SpiServiceLocator(SecondExampleSpiInterface.class),
+        @SpiServiceLocator(SecondExampleSpiInterface.class)
     })
     package your.target.package;
 
     import io.toolisticon.spiap.api.SpiServiceLocator;
-    import your.spi.package.ExampleSpiInterface;
+    import your.spi.package.FirstExampleSpiInterface;
+    import your.spi.package.SecondExampleSpiInterface;
 
 ## How to register a service implementation
 Just add a Service annotation to your service implementation:
@@ -96,7 +101,7 @@ Just add a Service annotation to your service implementation:
 Service annotations mandatory value must declare the SPI you want the service class to be registered to.
 All other annotation attributes are optional. 
 
-- id defines a custom id which can be used to locate a specific servics implementation via the generated service locator class. Defaults to fully qualified service class name in generated service locator.
+- id defines a custom id which can be used to locate a specific services implementation via the generated service locator class. Defaults to fully qualified service class name in generated service locator.
 - description declares a short description about the implementation
 - priority is used to define a specific order in which the services are located
 
