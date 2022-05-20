@@ -7,12 +7,10 @@ import java.lang.annotation.Target;
 
 /**
  * Marks an implementation of one or more SPI.
- *
- * @deprecated Please use {@link SpiService} instead
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(value = {ElementType.TYPE})
-public @interface Service {
+public @interface SpiService {
 
     /**
      * The SPI interface implemented by the annotated class.
@@ -35,6 +33,5 @@ public @interface Service {
      * Lower value are defining a higher priority. Defaults to 0.
      */
     int priority() default 0;
-
 
 }

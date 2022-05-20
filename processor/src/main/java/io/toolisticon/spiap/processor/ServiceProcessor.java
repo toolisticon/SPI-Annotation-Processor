@@ -12,6 +12,8 @@ import io.toolisticon.aptk.tools.wrapper.TypeElementWrapper;
 import io.toolisticon.spiap.api.OutOfService;
 import io.toolisticon.spiap.api.Service;
 import io.toolisticon.spiap.api.Services;
+import io.toolisticon.spiap.api.SpiService;
+import io.toolisticon.spiap.api.SpiServices;
 
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;
@@ -33,7 +35,7 @@ import java.util.Set;
  */
 public class ServiceProcessor extends AbstractAnnotationProcessor {
 
-    private final static Set<String> SUPPORTED_ANNOTATIONS = createSupportedAnnotationSet(Services.class, Service.class);
+    private final static Set<String> SUPPORTED_ANNOTATIONS = createSupportedAnnotationSet(Services.class, Service.class, SpiServices.class, SpiService.class);
 
     private final ServiceImplMap serviceImplHashMap = new ServiceImplMap();
 
@@ -113,6 +115,41 @@ public class ServiceProcessor extends AbstractAnnotationProcessor {
         }
 
 
+        // process Services annotation
+        for (Element element : roundEnv.getElementsAnnotatedWith(SpiServices.class)) {
+
+            // Check for OutOfService annotation
+            if (checkSkipProcessingBecauseOfOutOfServiceAnnotation(element)) {
+                continue;
+            }
+
+            // read annotation
+            SpiServicesWrapper servicesAnnotationWrapper = SpiServicesWrapper.wrap(element);
+
+            for (SpiServiceWrapper serviceWrapper : servicesAnnotationWrapper.value()) {
+                processAnnotation(serviceWrapper, element);
+            }
+
+
+        }
+
+
+        // process Service annotation
+        for (Element element : roundEnv.getElementsAnnotatedWith(SpiService.class)) {
+
+            // Check for OutOfService annotation
+            if (checkSkipProcessingBecauseOfOutOfServiceAnnotation(element)) {
+                continue;
+            }
+
+            // read annotation
+            SpiServiceWrapper serviceAnnotationWrapper = SpiServiceWrapper.wrap(element);
+
+            processAnnotation(serviceAnnotationWrapper, element);
+
+        }
+
+
     }
 
     private boolean checkSkipProcessingBecauseOfOutOfServiceAnnotation(Element element) {
@@ -125,7 +162,7 @@ public class ServiceProcessor extends AbstractAnnotationProcessor {
         return false;
     }
 
-    private void processAnnotation(ServiceWrapper serviceAnnotationWrapper, Element annotatedElement) {
+    private void processAnnotation(ServiceAnnotation serviceAnnotationWrapper, Element annotatedElement) {
 
         // check if it is placed on Class
         if (!ElementUtils.CheckKindOfElement.isClass(annotatedElement)) {
@@ -183,7 +220,7 @@ public class ServiceProcessor extends AbstractAnnotationProcessor {
      * @param annotatedTypeElement     the annotated element
      * @param serviceAnnotationWrapper The Service annotations AnnotationMirror
      */
-    private void writePropertiesFile(TypeElementWrapper annotatedTypeElement, ServiceWrapper serviceAnnotationWrapper) {
+    private void writePropertiesFile(TypeElementWrapper annotatedTypeElement, ServiceAnnotation serviceAnnotationWrapper) {
 
 
         String spiClassName = serviceAnnotationWrapper.valueAsFqn();
