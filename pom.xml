@@ -77,10 +77,8 @@
         <encoding>UTF-8</encoding>
 
         <java.version>1.8</java.version>
-
         <java.compile.source.version>${java.version}</java.compile.source.version>
         <java.compile.target.version>${java.version}</java.compile.target.version>
-
 
         <cute.version>0.12.0</cute.version>
         <aptk.version>0.20.0</aptk.version>
