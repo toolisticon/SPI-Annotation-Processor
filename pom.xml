@@ -77,31 +77,25 @@
         <encoding>UTF-8</encoding>
 
         <java.version>1.8</java.version>
+        <java.compile.source.version>${java.version}</java.compile.source.version>
+        <java.compile.target.version>${java.version}</java.compile.target.version>
 
-        <java.compile.source.version>1.8</java.compile.source.version>
-        <java.compile.target.version>1.8</java.compile.target.version>
-
-
-        <cute.version>0.9.0</cute.version>
-        <aptk.version>0.15.1</aptk.version>
+        <cute.version>0.12.0</cute.version>
+        <aptk.version>0.20.0</aptk.version>
 
         <!-- versions of test dependencies -->
-        <junit.version>4.12</junit.version>
+        <junit.version>4.13.2</junit.version>
         <hamcrest.version>2.2</hamcrest.version>
-        <mockito.version>2.28.2</mockito.version>
-        <lombok.version>1.18.4</lombok.version>
-
+        <mockito.version>4.5.1</mockito.version>
 
         <!-- plugin versions -->
-        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
-        <maven-assembly-plugin.version>2.4</maven-assembly-plugin.version>
-        <maven-bundle-plugin.version>4.2.1</maven-bundle-plugin.version>
-        <maven-failsafe-plugin.version>2.18.1</maven-failsafe-plugin.version>
-        <maven-jacoco-plugin.version>0.8.2</maven-jacoco-plugin.version>
-        <maven-processor-plugin.version>2.2.4</maven-processor-plugin.version>
-        <maven-surefire-plugin.version>2.18.1</maven-surefire-plugin.version>
+        <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
+        <maven-assembly-plugin.version>3.3.0</maven-assembly-plugin.version>
+        <maven-failsafe-plugin.version>2.22.2</maven-failsafe-plugin.version>
+        <maven-jacoco-plugin.version>0.8.8</maven-jacoco-plugin.version>
+        <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
 
-        <maven-javadoc-plugin.version>3.3.1</maven-javadoc-plugin.version>
+        <maven-javadoc-plugin.version>3.4.0</maven-javadoc-plugin.version>
 
 
     </properties>
@@ -386,14 +380,14 @@
 
             <dependency>
                 <groupId>io.toolisticon.aptk</groupId>
-                <artifactId>tools</artifactId>
+                <artifactId>aptk-tools</artifactId>
                 <version>${aptk.version}</version>
             </dependency>
 
             <!-- processors apis -->
             <dependency>
                 <groupId>io.toolisticon.aptk</groupId>
-                <artifactId>annotationwrapper-api</artifactId>
+                <artifactId>aptk-annotationwrapper-api</artifactId>
                 <version>${aptk.version}</version>
                 <scope>provided</scope>
             </dependency>
