@@ -255,19 +255,6 @@ public class ServiceProcessor extends AbstractAnnotationProcessor {
                 writer.writeTemplateString("!{for fqn: fqns}${fqn}\n!{/for}", model);
                 writer.close();
 
-                /*-
-                // Alternative approach by using the Filer utility class
-                BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(getFiler().createResource(StandardLocation.CLASS_OUTPUT, "", serviceProviderFile).openOutputStream()));
-
-                for (String value : allServiceImplementations) {
-                    bw.write(value);
-                    bw.newLine();
-                }
-                bw.flush();
-
-                bw.close();
-                */
-
                 MessagerUtils.info(null, "Written service provider registration file for ${0} containing ${1}", serviceProviderFile, allServiceImplementations);
 
             } catch (IOException e) {
