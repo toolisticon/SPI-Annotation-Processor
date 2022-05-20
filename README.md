@@ -16,6 +16,7 @@ Additionally it will generate a service locator for you.
 Annotation processor that
 - provides support for generating service locator file in _/META-INF/services/&lt;Full qualified spi interface name&gt;_
 - provides support for generating service locator class for accessing the SPI implementations
+- compatible with Java >= 8 (Java 7 support up to version 0.8.2)
 
 # How does it work?
 
