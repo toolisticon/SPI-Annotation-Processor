@@ -37,7 +37,7 @@ The annotation processor should be applied by defining it in annotation processo
 
     <plugin>
        <artifactId>maven-compiler-plugin</artifactId>
-       <configuration combine.self="append">
+       <configuration>
            <annotationProcessorPaths>
                <path>
                    <groupId>io.toolisticon.spiap</groupId>
