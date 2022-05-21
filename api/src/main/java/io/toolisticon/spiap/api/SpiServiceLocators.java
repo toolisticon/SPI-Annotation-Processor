@@ -14,6 +14,11 @@ import java.lang.annotation.Target;
 @Target(value = {ElementType.PACKAGE})
 public @interface SpiServiceLocators {
 
+    /**
+     * The SpiServiceLocators.
+     *
+     * @return an array of SpiServiceLocator
+     */
     SpiServiceLocator[] value();
 
 }
