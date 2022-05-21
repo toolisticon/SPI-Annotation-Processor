@@ -23,7 +23,7 @@
 
         <dependency>
             <groupId>io.toolisticon.spiap</groupId>
-            <artifactId>spiap-api</artifactId>
+            <artifactId>spiap-legacy-api</artifactId>
         </dependency>
 
         <dependency>
@@ -65,6 +65,7 @@
                             <artifactSet>
                                 <excludes>
                                     <exclude>io.toolisticon.spiap:spiap-api</exclude>
+                                    <exclude>io.toolisticon.spiap:spiap-legacy-api</exclude>
                                 </excludes>
                             </artifactSet>
 
