@@ -7,6 +7,8 @@ import java.lang.annotation.Target;
 
 /**
  * Marks an implementation of one or more SPI.
+ *
+ * @deprecated Please use {@link SpiService} instead
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(value = {ElementType.TYPE})

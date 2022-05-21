@@ -4,18 +4,21 @@ import io.toolisticon.example.spiapexample.api.DecimalCalculationOperation;
 import io.toolisticon.example.spiapexample.api.HelloWorldSpiInterface;
 import io.toolisticon.spiap.api.Service;
 import io.toolisticon.spiap.api.Services;
+import io.toolisticon.spiap.api.SpiService;
+import io.toolisticon.spiap.api.SpiServices;
 
 /**
  * Implements the multiplication decimal operation
  */
-@Services({
-        @Service(
+@SpiServices({
+        @SpiService(
                 value = DecimalCalculationOperation.class,
                 id = "MULTIPLICATION",
                 description = "Does the multiplication operation on two int values",
                 priority = 10),
-        @Service(
-                value = HelloWorldSpiInterface.class
+        @SpiService(
+                value = HelloWorldSpiInterface.class,
+                description = "Say Hello"
         )
 })
 public class MultiplicationDecimalOperationImpl implements DecimalCalculationOperation, HelloWorldSpiInterface {

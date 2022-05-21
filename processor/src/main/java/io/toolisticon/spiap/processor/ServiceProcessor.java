@@ -12,6 +12,8 @@ import io.toolisticon.aptk.tools.wrapper.TypeElementWrapper;
 import io.toolisticon.spiap.api.OutOfService;
 import io.toolisticon.spiap.api.Service;
 import io.toolisticon.spiap.api.Services;
+import io.toolisticon.spiap.api.SpiService;
+import io.toolisticon.spiap.api.SpiServices;
 
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;
@@ -19,9 +21,13 @@ import javax.lang.model.element.TypeElement;
 import javax.tools.StandardLocation;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 
@@ -33,7 +39,7 @@ import java.util.Set;
  */
 public class ServiceProcessor extends AbstractAnnotationProcessor {
 
-    private final static Set<String> SUPPORTED_ANNOTATIONS = createSupportedAnnotationSet(Services.class, Service.class);
+    private final static Set<String> SUPPORTED_ANNOTATIONS = createSupportedAnnotationSet(Services.class, Service.class, SpiServices.class, SpiService.class);
 
     private final ServiceImplMap serviceImplHashMap = new ServiceImplMap();
 
@@ -78,54 +84,56 @@ public class ServiceProcessor extends AbstractAnnotationProcessor {
 
     private void processAnnotationsInternally(RoundEnvironment roundEnv) {
 
-        // process Services annotation
-        for (Element element : roundEnv.getElementsAnnotatedWith(Services.class)) {
+        List<ServiceAnnotation> serviceWrappers = new ArrayList<>();
 
-            // Check for OutOfService annotation
-            if (checkSkipProcessingBecauseOfOutOfServiceAnnotation(element)) {
-                continue;
-            }
+        // get Service from Services annotation
+        roundEnv.getElementsAnnotatedWith(Services.class).stream()
+                .filter(e -> !checkSkipProcessingBecauseOfOutOfServiceAnnotation(e))
+                .forEach(e -> {
+                    serviceWrappers.addAll(Arrays.asList(ServicesWrapper.wrap(e).value()));
+                });
 
-            // read annotation
-            ServicesWrapper servicesAnnotationWrapper = ServicesWrapper.wrap(element);
+        // get from Service annotation
+        roundEnv.getElementsAnnotatedWith(Service.class).stream()
+                .filter(e -> !checkSkipProcessingBecauseOfOutOfServiceAnnotation(e))
+                .forEach(e -> {
+                    serviceWrappers.add(ServiceWrapper.wrap(e));
+                });
 
-            for (ServiceWrapper serviceWrapper : servicesAnnotationWrapper.value()) {
-                processAnnotation(serviceWrapper, element);
-            }
+        // get SpiService from Services annotation
+        roundEnv.getElementsAnnotatedWith(SpiServices.class).stream()
+                .filter(e -> !checkSkipProcessingBecauseOfOutOfServiceAnnotation(e))
+                .forEach(e -> {
+                    serviceWrappers.addAll(Arrays.asList(SpiServicesWrapper.wrap(e).value()));
+                });
+
+        // get from SpiService annotation
+        roundEnv.getElementsAnnotatedWith(SpiService.class).stream()
+                .filter(e -> !checkSkipProcessingBecauseOfOutOfServiceAnnotation(e))
+                .forEach(e -> {
+                    serviceWrappers.add(SpiServiceWrapper.wrap(e));
+                });
 
 
-        }
-
-
-        // process Service annotation
-        for (Element element : roundEnv.getElementsAnnotatedWith(Service.class)) {
-
-            // Check for OutOfService annotation
-            if (checkSkipProcessingBecauseOfOutOfServiceAnnotation(element)) {
-                continue;
-            }
-
-            // read annotation
-            ServiceWrapper serviceAnnotationWrapper = ServiceWrapper.wrap(element);
-
-            processAnnotation(serviceAnnotationWrapper, element);
-
-        }
-
+        // Now process all annotations
+        serviceWrappers.forEach(this::processAnnotation);
 
     }
 
     private boolean checkSkipProcessingBecauseOfOutOfServiceAnnotation(Element element) {
-        // Check for OutOfService annotation
-        if (element.getAnnotation(OutOfService.class) != null) {
-            // skip processing of element
-            MessagerUtils.info(element, ServiceProcessorMessages.INFO_SKIP_ELEMENT_ANNOTATED_AS_OUT_OF_SERVICE, ElementUtils.CastElement.castClass(element).getQualifiedName());
-            return true;
-        }
-        return false;
+        ElementWrapper<Element> elementWrapper = ElementWrapper.wrap(element);
+        Optional<OutOfService> outOfServiceAnnotation = elementWrapper.getAnnotation(OutOfService.class);
+
+        outOfServiceAnnotation.ifPresent(e -> {
+            elementWrapper.compilerMessage().asNote().write(ServiceProcessorMessages.INFO_SKIP_ELEMENT_ANNOTATED_AS_OUT_OF_SERVICE, ElementUtils.CastElement.castClass(element).getQualifiedName());
+        });
+
+        return outOfServiceAnnotation.isPresent();
     }
 
-    private void processAnnotation(ServiceWrapper serviceAnnotationWrapper, Element annotatedElement) {
+    private void processAnnotation(ServiceAnnotation serviceAnnotationWrapper) {
+
+        Element annotatedElement = serviceAnnotationWrapper._annotatedElement();
 
         // check if it is placed on Class
         if (!ElementUtils.CheckKindOfElement.isClass(annotatedElement)) {
@@ -134,46 +142,42 @@ public class ServiceProcessor extends AbstractAnnotationProcessor {
         }
 
         // Now create the service locator
-
         TypeElementWrapper typeElement = TypeElementWrapper.wrap((TypeElement) annotatedElement);
 
-        if (serviceAnnotationWrapper != null) {
+        Set<String> spiInterfaces = new HashSet<>();
+        String spiAttributeTypes = serviceAnnotationWrapper.valueAsFqn();
+        if (spiAttributeTypes != null) {
+            spiInterfaces.add(spiAttributeTypes);
+        }
 
-            Set<String> spiInterfaces = new HashSet<>();
-            String spiAttributeTypes = serviceAnnotationWrapper.valueAsFqn();
-            if (spiAttributeTypes != null) {
-                spiInterfaces.add(spiAttributeTypes);
+        for (String fqTypeName : spiInterfaces) {
+
+            TypeMirrorWrapper typeMirror = TypeMirrorWrapper.wrap(fqTypeName);
+            TypeElementWrapper typeMirrorTypeElement = typeMirror.getTypeElement().get();
+
+            //check if type is interface
+            if (!typeMirrorTypeElement.isInterface()) {
+                MessagerUtils.error(annotatedElement, ServiceProcessorMessages.ERROR_VALUE_ATTRIBUTE_MUST_ONLY_CONTAIN_INTERFACES, typeMirrorTypeElement.getQualifiedName());
+                break;
             }
 
-            for (String fqTypeName : spiInterfaces) {
-
-                TypeMirrorWrapper typeMirror = TypeMirrorWrapper.wrap(fqTypeName);
-                TypeElementWrapper typeMirrorTypeElement = typeMirror.getTypeElement().get();
-
-                //check if type is interface
-                if (!typeMirrorTypeElement.isInterface()) {
-                    MessagerUtils.error(annotatedElement, ServiceProcessorMessages.ERROR_VALUE_ATTRIBUTE_MUST_ONLY_CONTAIN_INTERFACES, typeMirrorTypeElement.getQualifiedName());
-                    break;
-                }
-
-                // check if annotatedElement is assignable to spi interface == implements the spi interface
-                if (!TypeUtils.TypeComparison.isAssignableTo(typeElement.unwrap(), typeMirror.unwrap())) {
-
-                    MessagerUtils.error(annotatedElement, ServiceProcessorMessages.ERROR_ANNOTATED_CLASS_MUST_IMPLEMENT_CONFIGURED_INTERFACES, typeMirrorTypeElement.getQualifiedName());
-                    break;
-
-                }
-
-                // Add configuration property file
-                writePropertiesFile(typeElement, serviceAnnotationWrapper);
-
-                // put service provider implementations in map by using the SPI fqn as key
-                serviceImplHashMap.put(fqTypeName, typeElement.getQualifiedName());
-
-
+            // check if annotatedElement is assignable to spi interface == implements the spi interface
+            if (!TypeUtils.TypeComparison.isAssignableTo(typeElement.unwrap(), typeMirror.unwrap())) {
+                MessagerUtils.error(annotatedElement, ServiceProcessorMessages.ERROR_ANNOTATED_CLASS_MUST_IMPLEMENT_CONFIGURED_INTERFACES, typeMirrorTypeElement.getQualifiedName());
+                break;
             }
+
+
+            // Add configuration property file
+            writePropertiesFile(typeElement, serviceAnnotationWrapper);
+
+            // put service provider implementations in map by using the SPI fqn as key
+            serviceImplHashMap.put(fqTypeName, typeElement.getQualifiedName());
+
 
         }
+
+
     }
 
     /**
@@ -183,7 +187,7 @@ public class ServiceProcessor extends AbstractAnnotationProcessor {
      * @param annotatedTypeElement     the annotated element
      * @param serviceAnnotationWrapper The Service annotations AnnotationMirror
      */
-    private void writePropertiesFile(TypeElementWrapper annotatedTypeElement, ServiceWrapper serviceAnnotationWrapper) {
+    private void writePropertiesFile(TypeElementWrapper annotatedTypeElement, ServiceAnnotation serviceAnnotationWrapper) {
 
 
         String spiClassName = serviceAnnotationWrapper.valueAsFqn();
@@ -250,19 +254,6 @@ public class ServiceProcessor extends AbstractAnnotationProcessor {
 
                 writer.writeTemplateString("!{for fqn: fqns}${fqn}\n!{/for}", model);
                 writer.close();
-
-                /*-
-                // Alternative approach by using the Filer utility class
-                BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(getFiler().createResource(StandardLocation.CLASS_OUTPUT, "", serviceProviderFile).openOutputStream()));
-
-                for (String value : allServiceImplementations) {
-                    bw.write(value);
-                    bw.newLine();
-                }
-                bw.flush();
-
-                bw.close();
-                */
 
                 MessagerUtils.info(null, "Written service provider registration file for ${0} containing ${1}", serviceProviderFile, allServiceImplementations);
 

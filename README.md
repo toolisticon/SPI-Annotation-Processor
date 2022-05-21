@@ -90,7 +90,7 @@ To create multiple service locators in the same package use @SpiServiceLocators:
 ## How to register a service implementation
 Just add a Service annotation to your service implementation:
 
-	@Service(value = ExampleSpiInterface.class, id = "YOUR_OPTIONAL_SERVICE_ID", description = "OPTIONAL DESCRIPTION", priority = 0)
+	@SpiService(value = ExampleSpiInterface.class, id = "YOUR_OPTIONAL_SERVICE_ID", description = "OPTIONAL DESCRIPTION", priority = 0)
 	public class ExampleSpiService implements ExampleSpiInterface {
 	    @Override
             public String doSomething() {
@@ -107,9 +107,9 @@ All other annotation attributes are optional.
 
 It's also possible to implement more than one SPI in a class by using the Services annotation:
         
-	@Services({
-	    @Service(value = ExampleSpiInterface1.class, id = "YOUR_OPTIONAL_SERVICE_ID", description = "OPTIONAL DESCRIPTION", priority = 0),
-	    @Service(value = ExampleSpiInterface2.class)
+	@SpiServices({
+	    @SpiService(value = ExampleSpiInterface1.class, id = "YOUR_OPTIONAL_SERVICE_ID", description = "OPTIONAL DESCRIPTION", priority = 0),
+	    @SpiService(value = ExampleSpiInterface2.class)
 	})
 	public class ExampleSpiService implements ExampleSpiInterface1, ExampeSpiInterface2 {
 	    @Override

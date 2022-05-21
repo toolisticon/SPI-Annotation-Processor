@@ -5,6 +5,8 @@ import ${ canonicalName };
 import io.toolisticon.spiap.api.OutOfService;
 import io.toolisticon.spiap.api.Service;
 import io.toolisticon.spiap.api.Services;
+import io.toolisticon.spiap.api.SpiService;
+import io.toolisticon.spiap.api.SpiServices;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -176,7 +178,7 @@ public enum ${ simpleName }ServiceLocator {
 
 
   /**
-   * Get the service implementation by annotation.
+   * Get the service implementation by Service annotation.
    *
    * @param previousConfig
    *          of type ServiceImplementation
@@ -194,8 +196,13 @@ public enum ${ simpleName }ServiceLocator {
       return getServiceAnnotation(serviceImpl)
           .map(s -> new ServiceImplementation(
               previousConfig, s.id(), s.description(), s.priority(), outOfService))
-          .orElse(new ServiceImplementation(
-              previousConfig, null, null, null, outOfService));
+          .orElse(
+              getSpiServiceAnnotation(serviceImpl)
+                  .map(s -> new ServiceImplementation(
+                        previousConfig, s.id(), s.description(), s.priority(), outOfService))
+                  .orElse(new ServiceImplementation(
+                        previousConfig, null, null, null, outOfService))
+              );
     } catch (final NoClassDefFoundError ignore) {
       // ignore
     }
@@ -205,7 +212,7 @@ public enum ${ simpleName }ServiceLocator {
 
 
   /**
-   * Find the service by annotation.
+   * Find the service by Service annotation.
    *
    * @param serviceImpl
    *          of type ${ simpleName }
@@ -228,6 +235,30 @@ public enum ${ simpleName }ServiceLocator {
     return Optional.empty();
   }
 
+
+  /**
+   * Find the service by SpiService annotation.
+   *
+   * @param serviceImpl
+   *          of type ${ simpleName }
+   * @return {@code Optional<Service>}
+   */
+  private Optional<SpiService> getSpiServiceAnnotation(
+      final ${ simpleName } serviceImpl) {
+
+    final SpiService serviceAnnotation = serviceImpl.getClass().getAnnotation(SpiService.class);
+    if (serviceAnnotation != null) {
+      return Optional.of(serviceAnnotation);
+    }
+
+    final SpiServices servicesAnnotation = serviceImpl.getClass().getAnnotation(SpiServices.class);
+    if (servicesAnnotation != null) {
+      return Arrays.stream(servicesAnnotation.value())
+          .filter(service -> ${ simpleName }.class.equals(service.value()))
+          .findFirst();
+    }
+    return Optional.empty();
+  }
 
   /**
    * Read the spiap properties file and get ServiceImplementation based on the properties.
