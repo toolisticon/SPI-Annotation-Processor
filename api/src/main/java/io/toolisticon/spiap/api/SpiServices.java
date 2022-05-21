@@ -12,5 +12,11 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(value = {ElementType.TYPE})
 public @interface SpiServices {
+
+    /**
+     * The spi services.
+     *
+     * @return an array of SpiService
+     */
     SpiService[] value();
 }

@@ -13,6 +13,8 @@ import java.lang.annotation.Target;
 public @interface SpiServiceLocator {
     /**
      * The service interface to create the service locator class for.
+     *
+     * @return the service interface
      */
     Class<?> value();
 
