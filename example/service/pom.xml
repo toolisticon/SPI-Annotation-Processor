@@ -8,7 +8,7 @@
     <parent>
         <groupId>io.toolisticon.spiap</groupId>
         <artifactId>example-parent</artifactId>
-        <version>0.9.1-alias_for_annotations-SNAPSHOT</version>
+        <version>0.9.1-SNAPSHOT</version>
     </parent>
 
     <name>example-service</name>

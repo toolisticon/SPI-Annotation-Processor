@@ -4,7 +4,7 @@
 
     <groupId>io.toolisticon.spiap</groupId>
     <artifactId>spiap-parent</artifactId>
-    <version>0.9.1-alias_for_annotations-SNAPSHOT</version>
+    <version>0.9.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>spiap-parent</name>
