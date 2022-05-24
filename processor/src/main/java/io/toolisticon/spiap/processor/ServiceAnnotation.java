@@ -7,7 +7,7 @@ import javax.lang.model.element.Element;
 import javax.lang.model.type.TypeMirror;
 
 /**
- * Interface to provide support for both {@link io.toolisticon.spiap.api.SpiService.Service} and {@link io.toolisticon.spiap.api.SpiService} via a generic wrapper api.
+ * Interface to provide support for {@link io.toolisticon.spiap.api.SpiService} via a generic wrapper api.
  */
 public interface ServiceAnnotation {
 

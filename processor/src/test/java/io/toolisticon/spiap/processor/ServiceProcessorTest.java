@@ -33,15 +33,6 @@ public class ServiceProcessorTest {
     }
 
     @Test
-    public void test_validUsage_withSpiServiceAnnotation() {
-
-        compileTestBuilder
-                .addSources("serviceprocessor/TestcaseValidUsageWithSpiServiceAnnotation.java")
-                .compilationShouldSucceed()
-                .executeTest();
-    }
-
-    @Test
     public void test_annotationMustBePlacedOnClass() {
         compileTestBuilder
                 .addSources("serviceprocessor/TestcaseUsageOnInterface.java")
@@ -84,15 +75,6 @@ public class ServiceProcessorTest {
                 .compilationShouldSucceed()
                 .executeTest();
     }
-
-    @Test
-    public void test_multipleServicesImplemented_withSpiServicesAnnotation() {
-        compileTestBuilder
-                .addSources("serviceprocessor/TestcaseMultipleServicesWithSpiServicesAnnotation.java")
-                .compilationShouldSucceed()
-                .executeTest();
-    }
-
 
     @Test
     public void test_OutOfServiceAnnotatedServicesShouldntBeProcessed() {

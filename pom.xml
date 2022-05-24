@@ -4,7 +4,7 @@
 
     <groupId>io.toolisticon.spiap</groupId>
     <artifactId>spiap-parent</artifactId>
-    <version>0.10.0</version>
+    <version>0.11.0</version>
     <packaging>pom</packaging>
 
     <name>spiap-parent</name>
@@ -15,7 +15,6 @@
 
         <!-- modules -->
         <module>api</module>
-        <module>legacyApi</module>
         <module>processor</module>
         <module>example</module>
 
@@ -373,12 +372,6 @@
             <dependency>
                 <groupId>io.toolisticon.spiap</groupId>
                 <artifactId>spiap-api</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>io.toolisticon.spiap</groupId>
-                <artifactId>spiap-legacy-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

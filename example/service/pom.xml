@@ -8,7 +8,7 @@
     <parent>
         <groupId>io.toolisticon.spiap</groupId>
         <artifactId>example-parent</artifactId>
-        <version>0.10.0</version>
+        <version>0.11.0</version>
     </parent>
 
     <name>example-service</name>
@@ -17,7 +17,7 @@
 
         <dependency>
             <groupId>io.toolisticon.spiap</groupId>
-            <artifactId>spiap-legacy-api</artifactId>
+            <artifactId>spiap-api</artifactId>
         </dependency>
 
         <dependency>
