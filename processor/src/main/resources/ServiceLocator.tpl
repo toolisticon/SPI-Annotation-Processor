@@ -3,8 +3,6 @@ package ${ package };
 import ${ canonicalName };
 
 import io.toolisticon.spiap.api.OutOfService;
-import io.toolisticon.spiap.api.Service;
-import io.toolisticon.spiap.api.Services;
 import io.toolisticon.spiap.api.SpiService;
 import io.toolisticon.spiap.api.SpiServices;
 
@@ -193,16 +191,10 @@ public enum ${ simpleName }ServiceLocator {
     try {
       final boolean outOfService = serviceImpl.getClass().getAnnotation(OutOfService.class) != null;
 
-      return getServiceAnnotation(serviceImpl)
+      return getSpiServiceAnnotation(serviceImpl)
           .map(s -> new ServiceImplementation(
               previousConfig, s.id(), s.description(), s.priority(), outOfService))
-          .orElse(
-              getSpiServiceAnnotation(serviceImpl)
-                  .map(s -> new ServiceImplementation(
-                        previousConfig, s.id(), s.description(), s.priority(), outOfService))
-                  .orElse(new ServiceImplementation(
-                        previousConfig, null, null, null, outOfService))
-              );
+          .orElse(previousConfig);
     } catch (final NoClassDefFoundError ignore) {
       // ignore
     }
@@ -210,30 +202,6 @@ public enum ${ simpleName }ServiceLocator {
     return previousConfig;
   }
 
-
-  /**
-   * Find the service by Service annotation.
-   *
-   * @param serviceImpl
-   *          of type ${ simpleName }
-   * @return {@code Optional<Service>}
-   */
-  private Optional<Service> getServiceAnnotation(
-      final ${ simpleName } serviceImpl) {
-
-    final Service serviceAnnotation = serviceImpl.getClass().getAnnotation(Service.class);
-    if (serviceAnnotation != null) {
-      return Optional.of(serviceAnnotation);
-    }
-
-    final Services servicesAnnotation = serviceImpl.getClass().getAnnotation(Services.class);
-    if (servicesAnnotation != null) {
-      return Arrays.stream(servicesAnnotation.value())
-          .filter(service -> ${ simpleName }.class.equals(service.value()))
-          .findFirst();
-    }
-    return Optional.empty();
-  }
 
 
   /**

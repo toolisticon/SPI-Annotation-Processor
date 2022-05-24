@@ -1,7 +1,7 @@
-import io.toolisticon.spiap.api.Service;
+import io.toolisticon.spiap.api.SpiService;
 import io.toolisticon.spiap.processor.serviceprocessortest.TestSpiInterface;
 
-@Service(TestSpiInterface.class)
+@SpiService(TestSpiInterface.class)
 public class TestcaseValidUseWithPlainInterface implements TestSpiInterface {
     public String doSomething() {
         return "";

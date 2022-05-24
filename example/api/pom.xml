@@ -18,7 +18,7 @@
 
         <dependency>
             <groupId>io.toolisticon.spiap</groupId>
-            <artifactId>spiap-legacy-api</artifactId>
+            <artifactId>spiap-api</artifactId>
             <scope>provided</scope>
         </dependency>
 

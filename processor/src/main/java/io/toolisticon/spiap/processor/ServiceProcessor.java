@@ -10,8 +10,6 @@ import io.toolisticon.aptk.tools.generators.SimpleResourceWriter;
 import io.toolisticon.aptk.tools.wrapper.ElementWrapper;
 import io.toolisticon.aptk.tools.wrapper.TypeElementWrapper;
 import io.toolisticon.spiap.api.OutOfService;
-import io.toolisticon.spiap.api.Service;
-import io.toolisticon.spiap.api.Services;
 import io.toolisticon.spiap.api.SpiService;
 import io.toolisticon.spiap.api.SpiServices;
 
@@ -32,14 +30,14 @@ import java.util.Properties;
 import java.util.Set;
 
 /**
- * Annotation Processor for {@link Service} and {@link Services}.
+ * Annotation Processor for {@link SpiService} and {@link SpiServices}.
  * Creates the service descriptor file in "/META-INF/services/fqnOfSpi".
  * Additionally, it creates a property file containing all additional metadata used by the ServiceLocator (like order, id and description)
  * to get rid of the api library as run time dependency.
  */
 public class ServiceProcessor extends AbstractAnnotationProcessor {
 
-    private final static Set<String> SUPPORTED_ANNOTATIONS = createSupportedAnnotationSet(Services.class, Service.class, SpiServices.class, SpiService.class);
+    private final static Set<String> SUPPORTED_ANNOTATIONS = createSupportedAnnotationSet(SpiServices.class, SpiService.class);
 
     private final ServiceImplMap serviceImplHashMap = new ServiceImplMap();
 
@@ -85,20 +83,6 @@ public class ServiceProcessor extends AbstractAnnotationProcessor {
     private void processAnnotationsInternally(RoundEnvironment roundEnv) {
 
         List<ServiceAnnotation> serviceWrappers = new ArrayList<>();
-
-        // get Service from Services annotation
-        roundEnv.getElementsAnnotatedWith(Services.class).stream()
-                .filter(e -> !checkSkipProcessingBecauseOfOutOfServiceAnnotation(e))
-                .forEach(e -> {
-                    serviceWrappers.addAll(Arrays.asList(ServicesWrapper.wrap(e).value()));
-                });
-
-        // get from Service annotation
-        roundEnv.getElementsAnnotatedWith(Service.class).stream()
-                .filter(e -> !checkSkipProcessingBecauseOfOutOfServiceAnnotation(e))
-                .forEach(e -> {
-                    serviceWrappers.add(ServiceWrapper.wrap(e));
-                });
 
         // get SpiService from Services annotation
         roundEnv.getElementsAnnotatedWith(SpiServices.class).stream()

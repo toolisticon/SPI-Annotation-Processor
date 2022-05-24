@@ -1,13 +1,12 @@
 package io.toolisticon.example.spiapexample.service;
 
 import io.toolisticon.example.spiapexample.api.DecimalCalculationOperation;
-import io.toolisticon.spiap.api.Service;
 import io.toolisticon.spiap.api.SpiService;
 
 
 /**
  * Implements the division decimal operation.
- * 
+ * <p>
  * It's ok not to set the id. The full qualified class name will be used as fallback value for id.
  */
 @SpiService(DecimalCalculationOperation.class)

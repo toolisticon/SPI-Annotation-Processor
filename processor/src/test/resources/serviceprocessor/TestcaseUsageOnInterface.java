@@ -1,9 +1,9 @@
 package io.toolisticon.spiap.processor.tests;
 
-import io.toolisticon.spiap.api.Service;
+import io.toolisticon.spiap.api.SpiService;
 import io.toolisticon.spiap.processor.serviceprocessortest.TestSpi;
 
-@Service(TestSpi.class)
+@SpiService(TestSpi.class)
 public interface TestcaseUsageOnInterface extends TestSpi {
 
 }
